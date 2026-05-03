@@ -3,7 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../../shared/models/auth.model';
+import {
+  AuthResponse,
+  CurrentUser,
+  LoginRequest,
+  RegisterRequest,
+  UserRole
+} from '../../shared/models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,33 +18,52 @@ export class AuthService {
 
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly tokenKey = 'accessToken';
+  private readonly userKey = 'currentUser';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request)
-      .pipe(
-        tap((response) => {
-          this.saveToken(this.extractToken(response));
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap((response) => this.saveSession(response))
+    );
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request)
-      .pipe(
-        tap((response) => {
-          this.saveToken(this.extractToken(response));
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
+      tap((response) => this.saveSession(response))
+    );
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+  saveSession(response: AuthResponse): void {
+    localStorage.setItem(this.tokenKey, response.token);
+
+    const currentUser: CurrentUser = {
+      userId: response.userId,
+      name: response.name,
+      email: response.email,
+      role: response.role
+    };
+
+    localStorage.setItem(this.userKey, JSON.stringify(currentUser));
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  getCurrentUser(): CurrentUser | null {
+    const rawUser = localStorage.getItem(this.userKey);
+
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawUser) as CurrentUser;
+    } catch {
+      this.logout();
+      return null;
+    }
   }
 
   isAuthenticated(): boolean {
@@ -57,33 +82,35 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
+    if (!this.isAuthenticated()) {
+      return false;
+    }
+
+    const currentUser = this.getCurrentUser();
+
+    if (currentUser?.role === 'ADMIN') {
+      return true;
+    }
+
     const token = this.getToken();
 
-    if (!token || this.isTokenExpired(token)) {
-      this.logout();
+    if (!token) {
       return false;
     }
 
     const payload = this.decodeToken(token);
+    const role = payload?.role;
 
-    if (!payload) {
-      return false;
-    }
-
-    const role = payload.role || payload.authority || payload.roles || payload.authorities;
-
-    if (typeof role === 'string') {
-      return role === 'ADMIN' || role === 'ROLE_ADMIN';
-    }
-
-    if (Array.isArray(role)) {
-      return role.includes('ADMIN') || role.includes('ROLE_ADMIN');
-    }
-
-    return false;
+    return role === 'ADMIN' || role === 'ROLE_ADMIN';
   }
 
   getUserEmail(): string | null {
+    const currentUser = this.getCurrentUser();
+
+    if (currentUser?.email) {
+      return currentUser.email;
+    }
+
     const token = this.getToken();
 
     if (!token) {
@@ -97,16 +124,27 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
-  }
-
-  private extractToken(response: AuthResponse): string {
-    return response.token || response.accessToken || '';
+    localStorage.removeItem(this.userKey);
   }
 
   private decodeToken(token: string): any | null {
     try {
       const payload = token.split('.')[1];
-      const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+
+      if (!payload) {
+        return null;
+      }
+
+      const normalizedPayload = payload
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      const decodedPayload = decodeURIComponent(
+        atob(normalizedPayload)
+          .split('')
+          .map((char) => `%${(`00${char.charCodeAt(0).toString(16)}`).slice(-2)}`)
+          .join('')
+      );
 
       return JSON.parse(decodedPayload);
     } catch {
@@ -121,8 +159,6 @@ export class AuthService {
       return false;
     }
 
-    const expirationTime = payload.exp * 1000;
-
-    return Date.now() >= expirationTime;
+    return Date.now() >= payload.exp * 1000;
   }
 }

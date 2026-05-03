@@ -1,3 +1,5 @@
+export type UserRole = 'ADMIN' | 'CLIENT';
+
 export interface LoginRequest {
     email: string;
     password: string;
@@ -10,6 +12,16 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-    token?: string;
-    accessToken?: string;
+    token: string;
+    userId: number;
+    name: string;
+    email: string;
+    role: UserRole;
+}
+
+export interface CurrentUser {
+    userId: number;
+    name: string;
+    email: string;
+    role: UserRole;
 }

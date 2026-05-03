@@ -43,7 +43,7 @@ export class AdminBusinessHours implements OnInit {
   constructor(
     private readonly businessHourService: BusinessHourService,
     private readonly toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadBusinessHours();
@@ -64,7 +64,7 @@ export class AdminBusinessHours implements OnInit {
         this.loading = false;
 
         if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No tienes permisos para gestionar horarios.';
+          this.errorMessage = 'Tu usuario no tiene permisos reales de administrador en el backend. Cierra sesión, verifica el rol en base de datos e inicia sesión nuevamente.';
           return;
         }
 
@@ -109,6 +109,11 @@ export class AdminBusinessHours implements OnInit {
       error: (error) => {
         console.error('UPDATE BUSINESS HOUR ERROR:', error);
         this.savingId = null;
+
+        if (error.status === 401 || error.status === 403) {
+          this.errorMessage = 'No se guardó el horario porque el backend no reconoce tu usuario como administrador.';
+          return;
+        }
 
         this.errorMessage =
           error?.error?.message ||
