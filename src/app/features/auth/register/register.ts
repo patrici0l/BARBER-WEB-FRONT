@@ -5,12 +5,13 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth';
 import { RegisterRequest } from '../../../shared/models/auth.model';
-
+import { Alert } from '../../../shared/components/alert/alert';
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     FormsModule,
+    Alert,
     NgIf,
     RouterLink
   ],

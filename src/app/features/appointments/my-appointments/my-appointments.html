@@ -6,26 +6,36 @@
       <p>Consulta tus turnos activos, cancelados o completados.</p>
     </div>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
+    <!-- Alertas de Error -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      [linkText]="
+        errorMessage === 'Debes iniciar sesión para ver tus reservas.' ? 'Ir al login' : ''
+      "
+      [linkTo]="errorMessage === 'Debes iniciar sesión para ver tus reservas.' ? '/login' : ''"
+      (closed)="errorMessage = ''"
+    ></app-alert>
 
-      <a *ngIf="errorMessage === 'Debes iniciar sesión para ver tus reservas.'" routerLink="/login">
-        Ir al login
-      </a>
-    </div>
-
-    <div *ngIf="successMessage" class="message message--success">
-      {{ successMessage }}
-    </div>
+    <!-- Alertas de Éxito -->
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (closed)="successMessage = ''"
+    ></app-alert>
 
     <div *ngIf="loading" class="state-card">Cargando tus reservas...</div>
 
+    <!-- Estado vacío -->
     <div *ngIf="!loading && !errorMessage && appointments.length === 0" class="empty-card">
       <h2>No tienes reservas todavía</h2>
       <p>Cuando reserves un turno, aparecerá en esta sección.</p>
       <a routerLink="/reservar">Reservar ahora</a>
     </div>
 
+    <!-- Listado de Reservas -->
     <div *ngIf="!loading && appointments.length > 0" class="appointments-grid">
       <article class="appointment-card" *ngFor="let appointment of appointments">
         <div class="appointment-card__top">
@@ -61,6 +71,7 @@
           </div>
         </div>
 
+        <!-- Botón de Cancelación -->
         <button
           *ngIf="canCancel(appointment)"
           type="button"

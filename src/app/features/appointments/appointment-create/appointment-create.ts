@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { BarberServiceService } from '../../../core/services/barber-service';
 import { AvailabilityService } from '../../../core/services/availability';
 import { AppointmentService } from '../../../core/services/appointment';
-
+import { Alert } from '../../../shared/components/alert/alert';
 import { BarberService } from '../../../shared/models/barber-service.model';
 import { AvailabilitySlot } from '../../../shared/models/availability-slot.model';
 import { Appointment, AppointmentRequest } from '../../../shared/models/appointment.model';
@@ -20,7 +20,8 @@ import { Appointment, AppointmentRequest } from '../../../shared/models/appointm
     FormsModule,
     RouterLink,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    Alert
   ],
   templateUrl: './appointment-create.html',
   styleUrl: './appointment-create.scss'
@@ -47,7 +48,7 @@ export class AppointmentCreate implements OnInit {
     private readonly barberServiceService: BarberServiceService,
     private readonly availabilityService: AvailabilityService,
     private readonly appointmentService: AppointmentService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.selectedDate = this.getToday();
@@ -71,6 +72,9 @@ export class AppointmentCreate implements OnInit {
     });
   }
 
+  /**
+   * Carga inicial de disponibilidad (limpia mensajes y estados previos)
+   */
   loadAvailability(): void {
     this.successMessage = '';
     this.errorMessage = '';
@@ -93,6 +97,28 @@ export class AppointmentCreate implements OnInit {
       error: (error) => {
         console.error('LOAD AVAILABILITY ERROR:', error);
         this.errorMessage = 'No se pudo consultar la disponibilidad.';
+        this.loadingAvailability = false;
+      }
+    });
+  }
+
+  /**
+   * Refresca la disponibilidad después de crear una cita sin borrar los mensajes de éxito
+   */
+  refreshAvailabilityAfterCreate(): void {
+    if (!this.selectedServiceId || !this.selectedDate) {
+      return;
+    }
+
+    this.loadingAvailability = true;
+
+    this.availabilityService.getAvailability(this.selectedDate, this.selectedServiceId).subscribe({
+      next: (slots) => {
+        this.slots = slots;
+        this.loadingAvailability = false;
+      },
+      error: (error) => {
+        console.error('REFRESH AVAILABILITY ERROR:', error);
         this.loadingAvailability = false;
       }
     });
@@ -121,7 +147,6 @@ export class AppointmentCreate implements OnInit {
     }
 
     const token = localStorage.getItem('accessToken');
-
     if (!token) {
       this.errorMessage = 'Debes iniciar sesión para reservar.';
       return;
@@ -140,9 +165,12 @@ export class AppointmentCreate implements OnInit {
         this.createdAppointment = appointment;
         this.successMessage = 'Reserva creada correctamente.';
         this.creatingAppointment = false;
+
+        // Limpiamos la selección horaria pero mantenemos el servicio/fecha
         this.selectedStartTime = '';
 
-        this.loadAvailability();
+        // Refrescamos los slots disponibles sin limpiar mensajes
+        this.refreshAvailabilityAfterCreate();
 
         setTimeout(() => {
           const confirmation = document.getElementById('reservation-confirmation');
@@ -175,7 +203,6 @@ export class AppointmentCreate implements OnInit {
     if (!this.selectedServiceId) {
       return undefined;
     }
-
     return this.services.find(service => service.id === Number(this.selectedServiceId));
   }
 

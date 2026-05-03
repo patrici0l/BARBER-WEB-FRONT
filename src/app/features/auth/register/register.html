@@ -6,9 +6,13 @@
 
     <p>Regístrate para reservar turnos y recibir futuras notificaciones.</p>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
-    </div>
+    <!-- Uso del componente Alert para Errores de Registro -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
 
     <form class="auth-form" (ngSubmit)="submit()">
       <label>
@@ -19,6 +23,7 @@
           [(ngModel)]="form.name"
           placeholder="Tu nombre"
           autocomplete="name"
+          required
         />
       </label>
 
@@ -30,6 +35,7 @@
           [(ngModel)]="form.email"
           placeholder="cliente@email.com"
           autocomplete="email"
+          required
         />
       </label>
 
@@ -41,6 +47,7 @@
           [(ngModel)]="form.password"
           placeholder="Mínimo 6 caracteres"
           autocomplete="new-password"
+          required
         />
       </label>
 
@@ -52,6 +59,7 @@
           [(ngModel)]="confirmPassword"
           placeholder="Repite tu contraseña"
           autocomplete="new-password"
+          required
         />
       </label>
 

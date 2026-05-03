@@ -5,14 +5,15 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth';
 import { LoginRequest } from '../../../shared/models/auth.model';
-
+import { Alert } from '../../../shared/components/alert/alert';
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     FormsModule,
     NgIf,
-    RouterLink
+    RouterLink,
+    Alert
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'

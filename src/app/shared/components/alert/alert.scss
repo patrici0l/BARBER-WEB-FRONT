@@ -1,0 +1,114 @@
+.alert {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: start;
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    &__icon {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        font-weight: 900;
+    }
+
+    &__content {
+        display: grid;
+        gap: 6px;
+
+        p {
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 700;
+        }
+
+        a {
+            width: fit-content;
+            font-weight: 900;
+            text-decoration: underline;
+        }
+    }
+
+    &__close {
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: inherit;
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    &--success {
+        background: rgba(80, 255, 160, 0.08);
+        border-color: rgba(80, 255, 160, 0.22);
+        color: #a6ffd0;
+
+        .alert__icon {
+            background: rgba(80, 255, 160, 0.14);
+        }
+
+        a {
+            color: #a6ffd0;
+        }
+    }
+
+    &--error {
+        background: rgba(255, 80, 80, 0.08);
+        border-color: rgba(255, 80, 80, 0.25);
+        color: #ffb4b4;
+
+        .alert__icon {
+            background: rgba(255, 80, 80, 0.14);
+        }
+
+        a {
+            color: #ffb4b4;
+        }
+    }
+
+    &--warning {
+        background: rgba(215, 168, 79, 0.1);
+        border-color: rgba(215, 168, 79, 0.24);
+        color: #d7a84f;
+
+        .alert__icon {
+            background: rgba(215, 168, 79, 0.16);
+        }
+
+        a {
+            color: #d7a84f;
+        }
+    }
+
+    &--info {
+        background: rgba(120, 160, 255, 0.1);
+        border-color: rgba(120, 160, 255, 0.22);
+        color: #b7c8ff;
+
+        .alert__icon {
+            background: rgba(120, 160, 255, 0.14);
+        }
+
+        a {
+            color: #b7c8ff;
+        }
+    }
+}
+
+@media (max-width: 560px) {
+    .alert {
+        grid-template-columns: auto 1fr;
+
+        &__close {
+            grid-column: 2;
+            justify-self: end;
+        }
+    }
+}

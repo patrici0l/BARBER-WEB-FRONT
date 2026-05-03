@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
+import { Alert } from '../../../shared/components/alert/alert';
 import { AppointmentService } from '../../../core/services/appointment';
 import { Appointment } from '../../../shared/models/appointment.model';
 
@@ -13,7 +13,8 @@ import { Appointment } from '../../../shared/models/appointment.model';
     NgFor,
     NgClass,
     DatePipe,
-    RouterLink
+    RouterLink,
+    Alert
   ],
   templateUrl: './my-appointments.html',
   styleUrl: './my-appointments.scss'

@@ -1,0 +1,30 @@
+<div
+  *ngIf="message"
+  class="alert"
+  [class.alert--success]="type === 'success'"
+  [class.alert--error]="type === 'error'"
+  [class.alert--warning]="type === 'warning'"
+  [class.alert--info]="type === 'info'"
+>
+  <div class="alert__icon">
+    {{ icon }}
+  </div>
+
+  <div class="alert__content">
+    <p>{{ message }}</p>
+
+    <a *ngIf="linkText && linkTo" [routerLink]="linkTo">
+      {{ linkText }}
+    </a>
+  </div>
+
+  <button
+    *ngIf="dismissible"
+    type="button"
+    class="alert__close"
+    aria-label="Cerrar mensaje"
+    (click)="close()"
+  >
+    ×
+  </button>
+</div>
