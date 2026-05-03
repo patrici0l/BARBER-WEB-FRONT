@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe, CurrencyPipe, NgFor, NgIf } from '@angular/common'; // Se agregó CurrencyPipe
+import { CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -9,7 +9,7 @@ import { AppointmentService } from '../../../core/services/appointment';
 
 import { BarberService } from '../../../shared/models/barber-service.model';
 import { AvailabilitySlot } from '../../../shared/models/availability-slot.model';
-import { AppointmentRequest } from '../../../shared/models/appointment.model';
+import { Appointment, AppointmentRequest } from '../../../shared/models/appointment.model';
 
 @Component({
   selector: 'app-appointment-create',
@@ -20,7 +20,7 @@ import { AppointmentRequest } from '../../../shared/models/appointment.model';
     FormsModule,
     RouterLink,
     DatePipe,
-    CurrencyPipe // Se agregó aquí para que el HTML lo reconozca
+    CurrencyPipe
   ],
   templateUrl: './appointment-create.html',
   styleUrl: './appointment-create.scss'
@@ -33,6 +33,8 @@ export class AppointmentCreate implements OnInit {
   selectedServiceId: number | null = null;
   selectedDate = '';
   selectedStartTime = '';
+
+  createdAppointment: Appointment | null = null;
 
   loadingServices = false;
   loadingAvailability = false;
@@ -61,7 +63,8 @@ export class AppointmentCreate implements OnInit {
         this.services = services;
         this.loadingServices = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('LOAD SERVICES ERROR:', error);
         this.errorMessage = 'No se pudieron cargar los servicios.';
         this.loadingServices = false;
       }
@@ -71,10 +74,12 @@ export class AppointmentCreate implements OnInit {
   loadAvailability(): void {
     this.successMessage = '';
     this.errorMessage = '';
+    this.createdAppointment = null;
     this.selectedStartTime = '';
     this.slots = [];
 
     if (!this.selectedServiceId || !this.selectedDate) {
+      this.errorMessage = 'Selecciona un servicio y una fecha.';
       return;
     }
 
@@ -85,7 +90,8 @@ export class AppointmentCreate implements OnInit {
         this.slots = slots;
         this.loadingAvailability = false;
       },
-      error: () => {
+      error: (error) => {
+        console.error('LOAD AVAILABILITY ERROR:', error);
         this.errorMessage = 'No se pudo consultar la disponibilidad.';
         this.loadingAvailability = false;
       }
@@ -93,18 +99,21 @@ export class AppointmentCreate implements OnInit {
   }
 
   selectSlot(slot: AvailabilitySlot): void {
-    if (!slot.available) {
+    if (!slot.available || !slot.startTime) {
+      this.errorMessage = 'Este horario no tiene una hora válida.';
       return;
     }
 
     this.selectedStartTime = slot.startTime;
     this.successMessage = '';
     this.errorMessage = '';
+    this.createdAppointment = null;
   }
 
   createAppointment(): void {
     this.successMessage = '';
     this.errorMessage = '';
+    this.createdAppointment = null;
 
     if (!this.selectedServiceId || !this.selectedDate || !this.selectedStartTime) {
       this.errorMessage = 'Selecciona servicio, fecha y horario.';
@@ -119,7 +128,7 @@ export class AppointmentCreate implements OnInit {
     }
 
     const request: AppointmentRequest = {
-      serviceId: this.selectedServiceId,
+      serviceId: Number(this.selectedServiceId),
       appointmentDate: this.selectedDate,
       startTime: this.selectedStartTime
     };
@@ -127,16 +136,39 @@ export class AppointmentCreate implements OnInit {
     this.creatingAppointment = true;
 
     this.appointmentService.createAppointment(request).subscribe({
-      next: () => {
+      next: (appointment) => {
+        this.createdAppointment = appointment;
         this.successMessage = 'Reserva creada correctamente.';
         this.creatingAppointment = false;
+        this.selectedStartTime = '';
+
         this.loadAvailability();
+
+        setTimeout(() => {
+          const confirmation = document.getElementById('reservation-confirmation');
+          confirmation?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
       },
       error: (error) => {
-        this.errorMessage = error?.error?.message || 'No se pudo crear la reserva.';
+        console.error('CREATE APPOINTMENT ERROR:', error);
         this.creatingAppointment = false;
+
+        if (error.status === 401 || error.status === 403) {
+          this.errorMessage = 'Tu sesión expiró o no tienes autorización. Inicia sesión nuevamente.';
+          return;
+        }
+
+        this.errorMessage =
+          error?.error?.message ||
+          error?.error?.error ||
+          `No se pudo crear la reserva. Status: ${error?.status}`;
       }
     });
+  }
+
+  clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   get selectedService(): BarberService | undefined {
@@ -145,6 +177,25 @@ export class AppointmentCreate implements OnInit {
     }
 
     return this.services.find(service => service.id === Number(this.selectedServiceId));
+  }
+
+  getConfirmationServiceName(): string {
+    return this.createdAppointment?.service?.name ||
+      this.createdAppointment?.serviceName ||
+      this.selectedService?.name ||
+      'Servicio';
+  }
+
+  getConfirmationDate(): string {
+    return this.createdAppointment?.appointmentDate || this.selectedDate;
+  }
+
+  getConfirmationStartTime(): string {
+    return this.createdAppointment?.startTime || this.selectedStartTime;
+  }
+
+  getConfirmationEndTime(): string {
+    return this.createdAppointment?.endTime || '';
   }
 
   private getToday(): string {

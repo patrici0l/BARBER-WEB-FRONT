@@ -10,9 +10,9 @@
       <form class="appointment-form" (ngSubmit)="createAppointment()">
         <h2>Datos de la reserva</h2>
 
+        <!-- Mensajes de Estado -->
         <div *ngIf="errorMessage" class="message message--error">
           {{ errorMessage }}
-
           <a *ngIf="errorMessage === 'Debes iniciar sesión para reservar.'" routerLink="/login">
             Ir al login
           </a>
@@ -22,6 +22,7 @@
           {{ successMessage }}
         </div>
 
+        <!-- Selección de Servicio -->
         <label>
           Servicio
           <select
@@ -37,6 +38,7 @@
           </select>
         </label>
 
+        <!-- Selección de Fecha -->
         <label>
           Fecha
           <input
@@ -47,12 +49,20 @@
           />
         </label>
 
+        <!-- Detalle del Servicio Seleccionado -->
         <div *ngIf="selectedService" class="selected-service">
           <h3>{{ selectedService.name }}</h3>
           <p>{{ selectedService.description }}</p>
           <strong>{{ selectedService.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
         </div>
 
+        <!-- Mejora Visual: Horario Seleccionado -->
+        <div *ngIf="selectedStartTime" class="selected-slot">
+          <span>Horario seleccionado</span>
+          <strong>{{ selectedStartTime }}</strong>
+        </div>
+
+        <!-- Botón de Confirmación -->
         <button
           type="submit"
           class="submit-button"
@@ -68,7 +78,10 @@
           <p *ngIf="selectedDate">Fecha seleccionada: {{ selectedDate | date: 'dd/MM/yyyy' }}</p>
         </div>
 
-        <div *ngIf="loadingAvailability" class="state-card">Consultando horarios...</div>
+        <!-- Estados de Carga y Vacío -->
+        <div *ngIf="loadingAvailability" class="state-card">
+          Consultando horarios...
+        </div>
 
         <div
           *ngIf="!loadingAvailability && selectedServiceId && slots.length === 0"
@@ -81,6 +94,7 @@
           Selecciona un servicio para consultar disponibilidad.
         </div>
 
+        <!-- Grilla de Horarios (Slots) -->
         <div *ngIf="!loadingAvailability && slots.length > 0" class="slots-grid">
           <button
             type="button"
@@ -88,11 +102,13 @@
             class="slot-button"
             [class.slot-button--selected]="selectedStartTime === slot.startTime"
             [class.slot-button--disabled]="!slot.available"
-            [disabled]="!slot.available"
+            [disabled]="!slot.available || !slot.startTime"
             (click)="selectSlot(slot)"
           >
-            <span>{{ slot.startTime }}</span>
-            <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+            <span>{{ slot.startTime || 'Sin hora' }}</span>
+            <small>
+              {{ slot.available ? 'Disponible' : 'Ocupado' }}
+            </small>
           </button>
         </div>
       </div>
