@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 
-import { ProductService } from '../../../core/services/product.service';
+import { ProductService } from '../../../core/services/product';
 import { Product } from '../../../shared/models/product.model';
 
 @Component({
@@ -20,7 +20,7 @@ export class ProductList implements OnInit {
   loading = false;
   errorMessage = '';
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadProducts();
