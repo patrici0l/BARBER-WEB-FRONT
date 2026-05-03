@@ -1,0 +1,19 @@
+<header class="navbar">
+  <div class="container navbar__content">
+    <a routerLink="/" class="navbar__brand"> Barbería </a>
+
+    <nav class="navbar__links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        Inicio
+      </a>
+
+      <a routerLink="/servicios" routerLinkActive="active"> Servicios </a>
+
+      <a routerLink="/productos" routerLinkActive="active"> Productos </a>
+
+      <a routerLink="/reservar" routerLinkActive="active"> Reservar </a>
+
+      <a routerLink="/login" routerLinkActive="active" class="navbar__login"> Iniciar sesión </a>
+    </nav>
+  </div>
+</header>

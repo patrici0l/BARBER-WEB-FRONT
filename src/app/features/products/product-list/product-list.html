@@ -1,0 +1,49 @@
+<section class="products-page">
+  <div class="container">
+    <div class="products-page__header">
+      <span>Catálogo</span>
+      <h1>Productos disponibles</h1>
+      <p>Explora productos activos para el cuidado del cabello, barba y estilo personal.</p>
+    </div>
+
+    <div *ngIf="loading" class="state-card">Cargando productos...</div>
+
+    <div *ngIf="errorMessage" class="state-card state-card--error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && products.length === 0" class="state-card">
+      No hay productos disponibles por ahora.
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && products.length > 0" class="products-grid">
+      <article class="product-card" *ngFor="let product of products">
+        <div class="product-card__image">
+          <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name" />
+
+          <div *ngIf="!product.imageUrl" class="product-card__placeholder">Sin imagen</div>
+        </div>
+
+        <div class="product-card__body">
+          <div class="product-card__top">
+            <h2>{{ product.name }}</h2>
+
+            <span
+              class="product-card__badge"
+              [class.product-card__badge--empty]="!product.available"
+            >
+              {{ product.available ? 'Disponible' : 'Agotado' }}
+            </span>
+          </div>
+
+          <p>{{ product.description }}</p>
+
+          <div class="product-card__meta">
+            <strong>{{ product.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+            <span>Stock: {{ product.stock }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
