@@ -2,63 +2,202 @@
   <div class="container">
     <div class="admin-page__header">
       <span>Panel administrativo</span>
-
       <div>
         <h1>Reservas</h1>
         <p>Consulta y gestiona las reservas realizadas por los clientes.</p>
       </div>
     </div>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
+    <!-- Alertas -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (closed)="successMessage = ''"
+    ></app-alert>
 
-      <a
-        *ngIf="errorMessage === 'No tienes permisos para acceder al panel admin.'"
-        routerLink="/login"
-      >
-        Ir al login
-      </a>
-    </div>
-
-    <div *ngIf="successMessage" class="message message--success">
-      {{ successMessage }}
-    </div>
-
+    <!-- Panel de Estadísticas (7 columnas ahora) -->
     <div class="stats-grid">
       <article class="stat-card">
-        <span>Total</span>
-        <strong>{{ totalAppointments }}</strong>
+        <span>Total</span><strong>{{ totalAppointments }}</strong>
       </article>
-
       <article class="stat-card">
-        <span>Reservadas</span>
-        <strong>{{ bookedAppointments }}</strong>
+        <span>Reservadas</span><strong>{{ bookedAppointments }}</strong>
       </article>
-
       <article class="stat-card">
-        <span>Canceladas</span>
-        <strong>{{ cancelledAppointments }}</strong>
+        <span>Hoy</span><strong>{{ todayAppointments.length }}</strong>
       </article>
-
       <article class="stat-card">
-        <span>Completadas</span>
-        <strong>{{ completedAppointments }}</strong>
+        <span>Pendientes hoy</span><strong>{{ bookedTodayAppointments.length }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Próximas</span><strong>{{ upcomingAppointments.length }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Canceladas</span><strong>{{ cancelledAppointments }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Completadas</span><strong>{{ completedAppointments }}</strong>
       </article>
     </div>
 
-    <div class="admin-actions">
-      <button type="button" (click)="loadAppointments()" [disabled]="loading">
-        {{ loading ? 'Actualizando...' : 'Actualizar reservas' }}
-      </button>
+    <!-- Sección "Reservas de hoy" -->
+    <section class="today-section" *ngIf="!loading">
+      <div class="today-section__header">
+        <div>
+          <span>Agenda diaria</span>
+          <h2>Reservas de hoy</h2>
+          <p>{{ todayDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <button
+          type="button"
+          (click)="loadAppointments()"
+          [disabled]="loading"
+          class="secondary-button"
+        >
+          {{ loading ? 'Actualizando...' : 'Actualizar agenda' }}
+        </button>
+      </div>
+
+      <div *ngIf="todayAppointments.length === 0" class="state-card">No hay reservas para hoy.</div>
+      <div *ngIf="todayAppointments.length > 0" class="today-list">
+        <article
+          class="today-card"
+          *ngFor="let appointment of todayAppointments"
+          [ngClass]="{
+            'today-card--booked': appointment.status === 'BOOKED',
+            'today-card--cancelled': appointment.status === 'CANCELLED',
+            'today-card--completed': appointment.status === 'COMPLETED',
+          }"
+        >
+          <div class="today-card__time">
+            <strong>{{ appointment.startTime }}</strong
+            ><span>{{ appointment.endTime }}</span>
+          </div>
+          <div class="today-card__body">
+            <h3>{{ getServiceName(appointment) }}</h3>
+            <p>
+              <strong>{{ getClientName(appointment) }}</strong
+              ><br /><small>{{ getClientEmail(appointment) }}</small>
+            </p>
+          </div>
+          <div class="today-card__status">
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-badge--booked': appointment.status === 'BOOKED',
+                'status-badge--cancelled': appointment.status === 'CANCELLED',
+                'status-badge--completed': appointment.status === 'COMPLETED',
+              }"
+            >
+              {{ getStatusLabel(appointment.status) }}
+            </span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- NUEVA Sección: Próximas reservas -->
+    <section class="upcoming-section" *ngIf="!loading">
+      <div class="upcoming-section__header">
+        <div>
+          <span>Agenda futura</span>
+          <h2>Próximas reservas</h2>
+          <p>Las siguientes 5 reservas activas desde este momento.</p>
+        </div>
+        <button type="button" class="secondary-button" (click)="showBookedInTable()">
+          Ver reservadas
+        </button>
+      </div>
+
+      <div *ngIf="upcomingAppointments.length === 0" class="state-card">
+        No hay próximas reservas activas.
+      </div>
+      <div *ngIf="upcomingAppointments.length > 0" class="upcoming-list">
+        <article class="upcoming-card" *ngFor="let appointment of upcomingAppointments">
+          <div class="upcoming-card__date">
+            <strong>{{ appointment.appointmentDate | date: 'dd/MM' }}</strong>
+            <span>{{ appointment.appointmentDate | date: 'yyyy' }}</span>
+          </div>
+          <div class="upcoming-card__content">
+            <h3>{{ getServiceName(appointment) }}</h3>
+            <p>
+              {{ getClientName(appointment) }}<span>{{ getClientEmail(appointment) }}</span>
+            </p>
+          </div>
+          <div class="upcoming-card__time">
+            <strong>{{ appointment.startTime }}</strong
+            ><span>{{ appointment.endTime }}</span>
+          </div>
+          <div class="upcoming-card__actions">
+            <button
+              type="button"
+              class="complete-button"
+              [disabled]="completingId === appointment.id"
+              (click)="completeAppointment(appointment)"
+            >
+              {{ completingId === appointment.id ? 'Completando...' : 'Completar' }}
+            </button>
+            <button
+              type="button"
+              class="cancel-button"
+              [disabled]="cancellingId === appointment.id"
+              (click)="cancelAppointment(appointment)"
+            >
+              {{ cancellingId === appointment.id ? 'Cancelando...' : 'Cancelar' }}
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Filtros y Tabla (Con ID para scroll) -->
+    <div class="filters-card">
+      <div class="filters-grid">
+        <label
+          >Estado
+          <select name="statusFilter" [(ngModel)]="statusFilter">
+            <option value="ALL">Todos</option>
+            <option value="BOOKED">Reservadas</option>
+            <option value="CANCELLED">Canceladas</option>
+            <option value="COMPLETED">Completadas</option>
+          </select>
+        </label>
+        <label>Fecha<input type="date" name="dateFilter" [(ngModel)]="dateFilter" /></label>
+        <label
+          >Buscar<input
+            type="text"
+            name="searchTerm"
+            [(ngModel)]="searchTerm"
+            placeholder="Cliente, email o servicio"
+        /></label>
+      </div>
+      <div class="filters-actions">
+        <button type="button" (click)="loadAppointments()" [disabled]="loading">
+          Actualizar reservas
+        </button>
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="!hasActiveFilters"
+          (click)="clearFilters()"
+        >
+          Limpiar filtros
+        </button>
+      </div>
     </div>
 
-    <div *ngIf="loading" class="state-card">Cargando reservas...</div>
-
-    <div *ngIf="!loading && !errorMessage && appointments.length === 0" class="state-card">
-      No hay reservas registradas.
-    </div>
-
-    <div *ngIf="!loading && appointments.length > 0" class="table-card">
+    <div
+      id="appointments-table"
+      *ngIf="!loading && filteredAppointments.length > 0"
+      class="table-card"
+    >
       <table>
         <thead>
           <tr>
@@ -70,26 +209,17 @@
             <th class="table-actions">Acciones</th>
           </tr>
         </thead>
-
         <tbody>
-          <tr *ngFor="let appointment of appointments">
-            <td>
-              {{ appointment.appointmentDate | date: 'dd/MM/yyyy' }}
-            </td>
-
+          <tr *ngFor="let appointment of filteredAppointments">
+            <td>{{ appointment.appointmentDate | date: 'dd/MM/yyyy' }}</td>
             <td>{{ appointment.startTime }} - {{ appointment.endTime }}</td>
-
-            <td>
-              {{ getServiceName(appointment) }}
-            </td>
-
+            <td>{{ getServiceName(appointment) }}</td>
             <td>
               <div class="client-cell">
-                <strong>{{ getClientName(appointment) }}</strong>
-                <span>{{ getClientEmail(appointment) }}</span>
+                <strong>{{ getClientName(appointment) }}</strong
+                ><span>{{ getClientEmail(appointment) }}</span>
               </div>
             </td>
-
             <td>
               <span
                 class="status-badge"
@@ -98,11 +228,9 @@
                   'status-badge--cancelled': appointment.status === 'CANCELLED',
                   'status-badge--completed': appointment.status === 'COMPLETED',
                 }"
+                >{{ getStatusLabel(appointment.status) }}</span
               >
-                {{ getStatusLabel(appointment.status) }}
-              </span>
             </td>
-
             <td class="table-actions">
               <button
                 *ngIf="canCancel(appointment)"
@@ -113,7 +241,6 @@
               >
                 {{ cancellingId === appointment.id ? 'Cancelando...' : 'Cancelar' }}
               </button>
-
               <span *ngIf="!canCancel(appointment)" class="muted"> Sin acciones </span>
             </td>
           </tr>

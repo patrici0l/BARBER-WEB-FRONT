@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { BusinessHourService } from '../../../core/services/business-hour';
 import { BusinessHour, BusinessHourRequest, DayOfWeek } from '../../../shared/models/business-hour.model';
+import { Alert } from '../../../shared/components/alert/alert';
+import { ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-admin-business-hours',
@@ -12,7 +14,8 @@ import { BusinessHour, BusinessHourRequest, DayOfWeek } from '../../../shared/mo
     NgIf,
     NgFor,
     NgClass,
-    FormsModule
+    FormsModule,
+    Alert
   ],
   templateUrl: './admin-business-hours.html',
   styleUrl: './admin-business-hours.scss'
@@ -37,11 +40,14 @@ export class AdminBusinessHours implements OnInit {
     'SUNDAY'
   ];
 
+  constructor(
+    private readonly businessHourService: BusinessHourService,
+    private readonly toastService: ToastService
+  ) {}
+
   ngOnInit(): void {
     this.loadBusinessHours();
   }
-
-  constructor(private readonly businessHourService: BusinessHourService) {}
 
   loadBusinessHours(): void {
     this.loading = true;
@@ -97,7 +103,7 @@ export class AdminBusinessHours implements OnInit {
     this.businessHourService.updateBusinessHour(businessHour.id, request).subscribe({
       next: () => {
         this.savingId = null;
-        this.successMessage = `Horario de ${this.getDayLabel(businessHour.dayOfWeek)} actualizado correctamente.`;
+        this.toastService.success(`Horario de ${this.getDayLabel(businessHour.dayOfWeek)} actualizado correctamente.`);
         this.loadBusinessHours();
       },
       error: (error) => {

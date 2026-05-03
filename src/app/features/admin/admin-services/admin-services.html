@@ -9,6 +9,7 @@
       </div>
     </div>
 
+    <!-- Estadísticas -->
     <div class="stats-grid">
       <article class="stat-card">
         <span>Total</span>
@@ -26,21 +27,35 @@
       </article>
     </div>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
-    </div>
+    <!-- Alertas con el nuevo componente reutilizable -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
 
-    <div *ngIf="successMessage" class="message message--success">
-      {{ successMessage }}
-    </div>
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (closed)="successMessage = ''"
+    ></app-alert>
 
     <div class="admin-layout">
+      <!-- Formulario de Creación/Edición -->
       <form class="service-form" (ngSubmit)="submit()">
         <h2>{{ editingServiceId ? 'Editar servicio' : 'Crear servicio' }}</h2>
 
         <label>
           Nombre
-          <input type="text" name="name" [(ngModel)]="form.name" placeholder="Ej: Corte clásico" />
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="form.name"
+            placeholder="Ej: Corte clásico"
+            required
+          />
         </label>
 
         <label>
@@ -95,6 +110,7 @@
         </div>
       </form>
 
+      <!-- Panel de Servicios Registrados -->
       <div class="services-panel">
         <div class="services-panel__header">
           <h2>Servicios registrados</h2>
@@ -125,7 +141,6 @@
                 </span>
 
                 <h3>{{ service.name }}</h3>
-
                 <p>{{ service.description }}</p>
               </div>
 
@@ -140,6 +155,7 @@
                 Editar
               </button>
 
+              <!-- Botones de Cambio de Estado -->
               <button
                 *ngIf="service.active"
                 type="button"

@@ -1,0 +1,27 @@
+<div class="toast-container">
+  <div
+    *ngFor="let toast of toasts$ | async"
+    class="toast"
+    [ngClass]="{
+      'toast--success': toast.type === 'success',
+      'toast--error': toast.type === 'error',
+      'toast--warning': toast.type === 'warning',
+      'toast--info': toast.type === 'info',
+    }"
+  >
+    <div class="toast__icon">
+      {{ getIcon(toast.type) }}
+    </div>
+
+    <p>{{ toast.message }}</p>
+
+    <button
+      type="button"
+      class="toast__close"
+      aria-label="Cerrar notificación"
+      (click)="removeToast(toast.id)"
+    >
+      ×
+    </button>
+  </div>
+</div>

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Alert } from '../../../shared/components/alert/alert';
+
 import { AppointmentService } from '../../../core/services/appointment';
 import { Appointment } from '../../../shared/models/appointment.model';
+import { Alert } from '../../../shared/components/alert/alert';
+import { ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-my-appointments',
@@ -27,7 +29,10 @@ export class MyAppointments implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private readonly appointmentService: AppointmentService) { }
+  constructor(
+    private readonly appointmentService: AppointmentService,
+    private readonly toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.loadAppointments();
@@ -77,7 +82,7 @@ export class MyAppointments implements OnInit {
     this.appointmentService.cancelAppointment(appointment.id).subscribe({
       next: () => {
         this.cancellingId = null;
-        this.successMessage = 'Reserva cancelada correctamente.';
+        this.toastService.success('Reserva cancelada correctamente.');
         this.loadAppointments();
       },
       error: (error) => {

@@ -11,6 +11,7 @@
       </div>
     </div>
 
+    <!-- Estadísticas de Horarios -->
     <div class="stats-grid">
       <article class="stat-card">
         <span>Total días</span>
@@ -28,13 +29,20 @@
       </article>
     </div>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
-    </div>
+    <!-- Alertas con el componente reutilizable -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
 
-    <div *ngIf="successMessage" class="message message--success">
-      {{ successMessage }}
-    </div>
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (closed)="successMessage = ''"
+    ></app-alert>
 
     <div class="admin-actions">
       <button type="button" (click)="loadBusinessHours()" [disabled]="loading">
@@ -42,12 +50,14 @@
       </button>
     </div>
 
+    <!-- Estados de Carga y Vacío -->
     <div *ngIf="loading" class="state-card">Cargando horarios...</div>
 
     <div *ngIf="!loading && businessHours.length === 0" class="state-card">
       No hay horarios registrados.
     </div>
 
+    <!-- Listado de Horarios por Día -->
     <div *ngIf="!loading && businessHours.length > 0" class="hours-grid">
       <article class="hour-card" *ngFor="let businessHour of businessHours">
         <div class="hour-card__top">
@@ -101,7 +111,7 @@
         <button
           type="button"
           class="save-button"
-          [disabled]="savingId === businessHour.id"
+          [disabled]="savingId === businessHour.id || !businessHour.active"
           (click)="saveBusinessHour(businessHour)"
         >
           {{ savingId === businessHour.id ? 'Guardando...' : 'Guardar horario' }}

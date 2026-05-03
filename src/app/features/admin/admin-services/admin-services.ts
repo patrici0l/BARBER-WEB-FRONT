@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { ToastService } from '../../../core/services/toast';
 import { BarberServiceService } from '../../../core/services/barber-service';
 import { BarberService, BarberServiceRequest } from '../../../shared/models/barber-service.model';
+import { Alert } from '../../../shared/components/alert/alert';
 
 @Component({
   selector: 'app-admin-services',
@@ -13,7 +14,8 @@ import { BarberService, BarberServiceRequest } from '../../../shared/models/barb
     NgFor,
     NgClass,
     FormsModule,
-    CurrencyPipe
+    CurrencyPipe,
+    Alert
   ],
   templateUrl: './admin-services.html',
   styleUrl: './admin-services.scss'
@@ -21,7 +23,6 @@ import { BarberService, BarberServiceRequest } from '../../../shared/models/barb
 export class AdminServices implements OnInit {
 
   services: BarberService[] = [];
-
   form: BarberServiceRequest = this.getEmptyForm();
 
   editingServiceId: number | null = null;
@@ -30,9 +31,12 @@ export class AdminServices implements OnInit {
   changingStatusId: number | null = null;
 
   errorMessage = '';
-  successMessage = '';
+  successMessage = ''; // Se mantiene por compatibilidad, pero priorizamos Toast
 
-  constructor(private readonly barberServiceService: BarberServiceService) { }
+  constructor(
+    private readonly barberServiceService: BarberServiceService,
+    private readonly toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.loadServices();
@@ -105,7 +109,7 @@ export class AdminServices implements OnInit {
     this.barberServiceService.createService(request).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage = 'Servicio creado correctamente.';
+        this.toastService.success('Servicio creado correctamente.');
         this.resetForm();
         this.loadServices();
       },
@@ -123,7 +127,7 @@ export class AdminServices implements OnInit {
     this.barberServiceService.updateService(id, request).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage = 'Servicio actualizado correctamente.';
+        this.toastService.success('Servicio actualizado correctamente.');
         this.resetForm();
         this.loadServices();
       },
@@ -161,12 +165,11 @@ export class AdminServices implements OnInit {
   activateService(service: BarberService): void {
     this.changingStatusId = service.id;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.barberServiceService.activateService(service.id).subscribe({
       next: () => {
         this.changingStatusId = null;
-        this.successMessage = 'Servicio activado correctamente.';
+        this.toastService.success('Servicio activado correctamente.');
         this.loadServices();
       },
       error: (error) => {
@@ -182,12 +185,11 @@ export class AdminServices implements OnInit {
   deactivateService(service: BarberService): void {
     this.changingStatusId = service.id;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.barberServiceService.deactivateService(service.id).subscribe({
       next: () => {
         this.changingStatusId = null;
-        this.successMessage = 'Servicio desactivado correctamente.';
+        this.toastService.success('Servicio desactivado correctamente.');
         this.loadServices();
       },
       error: (error) => {
@@ -203,6 +205,8 @@ export class AdminServices implements OnInit {
   resetForm(): void {
     this.editingServiceId = null;
     this.form = this.getEmptyForm();
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   get activeServices(): number {

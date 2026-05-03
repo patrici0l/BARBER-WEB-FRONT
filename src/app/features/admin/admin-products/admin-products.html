@@ -9,6 +9,7 @@
       </div>
     </div>
 
+    <!-- Estadísticas de Productos -->
     <div class="stats-grid">
       <article class="stat-card">
         <span>Total</span>
@@ -31,15 +32,23 @@
       </article>
     </div>
 
-    <div *ngIf="errorMessage" class="message message--error">
-      {{ errorMessage }}
-    </div>
+    <!-- Alertas de Error y Éxito -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
 
-    <div *ngIf="successMessage" class="message message--success">
-      {{ successMessage }}
-    </div>
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (closed)="successMessage = ''"
+    ></app-alert>
 
     <div class="admin-layout">
+      <!-- Formulario de Creación / Edición -->
       <form class="product-form" (ngSubmit)="submit()">
         <h2>{{ editingProductId ? 'Editar producto' : 'Crear producto' }}</h2>
 
@@ -50,6 +59,7 @@
             name="name"
             [(ngModel)]="form.name"
             placeholder="Ej: Pomada para cabello"
+            required
           />
         </label>
 
@@ -109,6 +119,7 @@
         </div>
       </form>
 
+      <!-- Panel de Listado de Productos -->
       <div class="products-panel">
         <div class="products-panel__header">
           <h2>Productos registrados</h2>
@@ -128,7 +139,6 @@
           <article class="product-card" *ngFor="let product of products">
             <div class="product-card__image">
               <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name" />
-
               <div *ngIf="!product.imageUrl" class="product-card__placeholder">Sin imagen</div>
             </div>
 
@@ -158,7 +168,6 @@
                   </div>
 
                   <h3>{{ product.name }}</h3>
-
                   <p>{{ product.description }}</p>
                 </div>
 

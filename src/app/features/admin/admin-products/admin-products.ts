@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { ToastService } from '../../../core/services/toast';
 import { ProductService } from '../../../core/services/product';
 import { Product, ProductRequest } from '../../../shared/models/product.model';
+import { Alert } from '../../../shared/components/alert/alert';
 
 @Component({
   selector: 'app-admin-products',
@@ -13,7 +14,8 @@ import { Product, ProductRequest } from '../../../shared/models/product.model';
     NgFor,
     NgClass,
     FormsModule,
-    CurrencyPipe
+    CurrencyPipe,
+    Alert
   ],
   templateUrl: './admin-products.html',
   styleUrl: './admin-products.scss'
@@ -33,7 +35,10 @@ export class AdminProducts implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private readonly productService: ProductService) { }
+  constructor(
+    private readonly productService: ProductService,
+    private readonly toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -107,7 +112,7 @@ export class AdminProducts implements OnInit {
     this.productService.createProduct(request).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage = 'Producto creado correctamente.';
+        this.toastService.success('Producto creado correctamente.');
         this.resetForm();
         this.loadProducts();
       },
@@ -125,7 +130,7 @@ export class AdminProducts implements OnInit {
     this.productService.updateProduct(id, request).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage = 'Producto actualizado correctamente.';
+        this.toastService.success('Producto actualizado correctamente.');
         this.resetForm();
         this.loadProducts();
       },
@@ -169,7 +174,7 @@ export class AdminProducts implements OnInit {
     this.productService.activateProduct(product.id).subscribe({
       next: () => {
         this.changingStatusId = null;
-        this.successMessage = 'Producto activado correctamente.';
+        this.toastService.success('Producto activado correctamente.');
         this.loadProducts();
       },
       error: (error) => {
@@ -190,7 +195,7 @@ export class AdminProducts implements OnInit {
     this.productService.deactivateProduct(product.id).subscribe({
       next: () => {
         this.changingStatusId = null;
-        this.successMessage = 'Producto desactivado correctamente.';
+        this.toastService.success('Producto desactivado correctamente.');
         this.loadProducts();
       },
       error: (error) => {
@@ -224,7 +229,7 @@ export class AdminProducts implements OnInit {
     this.productService.updateStock(product.id, { stock }).subscribe({
       next: () => {
         this.updatingStockId = null;
-        this.successMessage = 'Stock actualizado correctamente.';
+        this.toastService.success('Stock actualizado correctamente.');
         this.loadProducts();
       },
       error: (error) => {
