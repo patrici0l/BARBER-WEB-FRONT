@@ -50,20 +50,17 @@
             filter: brightness(1.08);
         }
     }
-}
 
-@media (max-width: 720px) {
-    .navbar {
-        &__content {
-            align-items: flex-start;
-            flex-direction: column;
-            padding: 16px 0;
-        }
+    &__logout {
+        padding: 10px 16px;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255, 80, 80, 0.12);
+        color: #ffb4b4;
+        font-weight: 800;
 
-        &__links {
-            width: 100%;
-            flex-wrap: wrap;
-            gap: 12px;
+        &:hover {
+            filter: brightness(1.12);
         }
     }
 }

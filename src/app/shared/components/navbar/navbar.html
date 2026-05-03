@@ -3,6 +3,7 @@
     <a routerLink="/" class="navbar__brand"> Barbería </a>
 
     <nav class="navbar__links">
+      <!-- Enlaces Generales -->
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         Inicio
       </a>
@@ -13,7 +14,32 @@
 
       <a routerLink="/reservar" routerLinkActive="active"> Reservar </a>
 
-      <a routerLink="/login" routerLinkActive="active" class="navbar__login"> Iniciar sesión </a>
+      <!-- Enlaces de Usuario -->
+      <a *ngIf="isLoggedIn" routerLink="/mis-reservas" routerLinkActive="active"> Mis reservas </a>
+
+      <!-- Sección Admin -->
+      <a *ngIf="isLoggedIn" routerLink="/admin" routerLinkActive="active"> Admin </a>
+
+      <a *ngIf="isLoggedIn" routerLink="/admin/servicios" routerLinkActive="active">
+        Admin servicios
+      </a>
+
+      <a *ngIf="isLoggedIn" routerLink="/admin/productos" routerLinkActive="active">
+        Admin productos
+      </a>
+
+      <a *ngIf="isLoggedIn" routerLink="/admin/horarios" routerLinkActive="active">
+        Admin horarios
+      </a>
+
+      <!-- Auth -->
+      <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active" class="navbar__login">
+        Iniciar sesión
+      </a>
+
+      <button *ngIf="isLoggedIn" type="button" class="navbar__logout" (click)="logout()">
+        Cerrar sesión
+      </button>
     </nav>
   </div>
 </header>

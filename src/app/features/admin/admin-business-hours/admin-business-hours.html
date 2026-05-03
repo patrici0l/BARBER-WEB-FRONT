@@ -1,0 +1,112 @@
+<section class="admin-hours-page">
+  <div class="container">
+    <div class="admin-hours-page__header">
+      <span>Panel administrativo</span>
+
+      <div>
+        <h1>Horarios de atención</h1>
+        <p>
+          Configura los días abiertos, horarios de apertura y cierre para calcular disponibilidad.
+        </p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Total días</span>
+        <strong>{{ businessHours.length }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Días activos</span>
+        <strong>{{ activeDays }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Días cerrados</span>
+        <strong>{{ closedDays }}</strong>
+      </article>
+    </div>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="message message--success">
+      {{ successMessage }}
+    </div>
+
+    <div class="admin-actions">
+      <button type="button" (click)="loadBusinessHours()" [disabled]="loading">
+        {{ loading ? 'Actualizando...' : 'Actualizar horarios' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="state-card">Cargando horarios...</div>
+
+    <div *ngIf="!loading && businessHours.length === 0" class="state-card">
+      No hay horarios registrados.
+    </div>
+
+    <div *ngIf="!loading && businessHours.length > 0" class="hours-grid">
+      <article class="hour-card" *ngFor="let businessHour of businessHours">
+        <div class="hour-card__top">
+          <div>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-badge--active': businessHour.active,
+                'status-badge--inactive': !businessHour.active,
+              }"
+            >
+              {{ businessHour.active ? 'Abierto' : 'Cerrado' }}
+            </span>
+
+            <h2>{{ getDayLabel(businessHour.dayOfWeek) }}</h2>
+          </div>
+
+          <button
+            type="button"
+            class="toggle-button"
+            [ngClass]="{
+              'toggle-button--active': businessHour.active,
+              'toggle-button--inactive': !businessHour.active,
+            }"
+            (click)="toggleActive(businessHour)"
+          >
+            {{ businessHour.active ? 'Cerrar día' : 'Abrir día' }}
+          </button>
+        </div>
+
+        <div class="hour-card__form">
+          <label>
+            Apertura
+            <input
+              type="time"
+              [(ngModel)]="businessHour.openTime"
+              [disabled]="!businessHour.active"
+            />
+          </label>
+
+          <label>
+            Cierre
+            <input
+              type="time"
+              [(ngModel)]="businessHour.closeTime"
+              [disabled]="!businessHour.active"
+            />
+          </label>
+        </div>
+
+        <button
+          type="button"
+          class="save-button"
+          [disabled]="savingId === businessHour.id"
+          (click)="saveBusinessHour(businessHour)"
+        >
+          {{ savingId === businessHour.id ? 'Guardando...' : 'Guardar horario' }}
+        </button>
+      </article>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,221 @@
+.appointment-page {
+    padding: 64px 0;
+    background: #111111;
+
+    &__header {
+        max-width: 760px;
+        margin-bottom: 36px;
+
+        span {
+            display: inline-block;
+            margin-bottom: 12px;
+            color: #d7a84f;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.78rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 4rem);
+            letter-spacing: -0.05em;
+        }
+
+        p {
+            margin: 16px 0 0;
+            color: #bbbbbb;
+            line-height: 1.7;
+        }
+    }
+}
+
+.appointment-layout {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.appointment-form,
+.availability-panel {
+    padding: 26px;
+    border-radius: 28px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    h2 {
+        margin: 0 0 22px;
+    }
+}
+
+.appointment-form {
+    display: grid;
+    gap: 18px;
+
+    label {
+        display: grid;
+        gap: 8px;
+        color: #dddddd;
+        font-weight: 700;
+    }
+
+    select,
+    input {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #111111;
+        color: #ffffff;
+        outline: none;
+
+        &:focus {
+            border-color: #d7a84f;
+        }
+    }
+}
+
+.selected-service {
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(215, 168, 79, 0.08);
+    border: 1px solid rgba(215, 168, 79, 0.16);
+
+    h3 {
+        margin: 0;
+        color: #d7a84f;
+    }
+
+    p {
+        margin: 10px 0;
+        color: #bbbbbb;
+        line-height: 1.5;
+    }
+
+    strong {
+        color: #ffffff;
+        font-size: 1.15rem;
+    }
+}
+
+.submit-button {
+    min-height: 48px;
+    border: 0;
+    border-radius: 999px;
+    background: #d7a84f;
+    color: #111111;
+    font-weight: 900;
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+}
+
+.availability-panel {
+    &__header {
+        margin-bottom: 20px;
+
+        h2 {
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin: 0;
+            color: #aaaaaa;
+        }
+    }
+}
+
+.slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.slot-button {
+    display: grid;
+    gap: 4px;
+    min-height: 70px;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(215, 168, 79, 0.18);
+    background: rgba(215, 168, 79, 0.08);
+    color: #ffffff;
+    text-align: left;
+
+    span {
+        font-weight: 900;
+        font-size: 1.05rem;
+    }
+
+    small {
+        color: #d7a84f;
+        font-weight: 700;
+    }
+
+    &:hover {
+        border-color: #d7a84f;
+    }
+
+    &--selected {
+        background: #d7a84f;
+        color: #111111;
+
+        small {
+            color: #111111;
+        }
+    }
+
+    &--disabled {
+        opacity: 0.35;
+        background: #222222;
+        border-color: rgba(255, 255, 255, 0.08);
+        cursor: not-allowed;
+
+        small {
+            color: #aaaaaa;
+        }
+    }
+}
+
+.state-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #dddddd;
+}
+
+.message {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 14px;
+    line-height: 1.5;
+
+    a {
+        font-weight: 800;
+        text-decoration: underline;
+    }
+
+    &--error {
+        background: rgba(255, 80, 80, 0.1);
+        border: 1px solid rgba(255, 80, 80, 0.25);
+        color: #ffb4b4;
+    }
+
+    &--success {
+        background: rgba(80, 255, 160, 0.08);
+        border: 1px solid rgba(80, 255, 160, 0.2);
+        color: #a6ffd0;
+    }
+}
+
+@media (max-width: 940px) {
+    .appointment-layout {
+        grid-template-columns: 1fr;
+    }
+}

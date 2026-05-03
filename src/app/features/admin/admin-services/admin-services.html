@@ -1,0 +1,168 @@
+<section class="admin-services-page">
+  <div class="container">
+    <div class="admin-services-page__header">
+      <span>Panel administrativo</span>
+
+      <div>
+        <h1>Gestión de servicios</h1>
+        <p>Crea, edita, activa o desactiva los servicios disponibles para reservas.</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Total</span>
+        <strong>{{ services.length }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Activos</span>
+        <strong>{{ activeServices }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Inactivos</span>
+        <strong>{{ inactiveServices }}</strong>
+      </article>
+    </div>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="message message--success">
+      {{ successMessage }}
+    </div>
+
+    <div class="admin-layout">
+      <form class="service-form" (ngSubmit)="submit()">
+        <h2>{{ editingServiceId ? 'Editar servicio' : 'Crear servicio' }}</h2>
+
+        <label>
+          Nombre
+          <input type="text" name="name" [(ngModel)]="form.name" placeholder="Ej: Corte clásico" />
+        </label>
+
+        <label>
+          Descripción
+          <textarea
+            name="description"
+            [(ngModel)]="form.description"
+            rows="4"
+            placeholder="Describe el servicio"
+          ></textarea>
+        </label>
+
+        <div class="form-grid">
+          <label>
+            Precio
+            <input type="number" name="price" [(ngModel)]="form.price" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Duración
+            <input
+              type="number"
+              name="durationMinutes"
+              [(ngModel)]="form.durationMinutes"
+              min="1"
+              step="5"
+            />
+          </label>
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" name="active" [(ngModel)]="form.active" />
+          Servicio activo
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="saving">
+            {{
+              saving ? 'Guardando...' : editingServiceId ? 'Actualizar servicio' : 'Crear servicio'
+            }}
+          </button>
+
+          <button
+            *ngIf="editingServiceId"
+            type="button"
+            class="secondary-button"
+            (click)="cancelEdit()"
+            [disabled]="saving"
+          >
+            Cancelar edición
+          </button>
+        </div>
+      </form>
+
+      <div class="services-panel">
+        <div class="services-panel__header">
+          <h2>Servicios registrados</h2>
+
+          <button type="button" (click)="loadServices()" [disabled]="loading">
+            {{ loading ? 'Actualizando...' : 'Actualizar' }}
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="state-card">Cargando servicios...</div>
+
+        <div *ngIf="!loading && services.length === 0" class="state-card">
+          No hay servicios registrados.
+        </div>
+
+        <div *ngIf="!loading && services.length > 0" class="services-list">
+          <article class="service-card" *ngFor="let service of services">
+            <div class="service-card__main">
+              <div>
+                <span
+                  class="status-badge"
+                  [ngClass]="{
+                    'status-badge--active': service.active,
+                    'status-badge--inactive': !service.active,
+                  }"
+                >
+                  {{ service.active ? 'Activo' : 'Inactivo' }}
+                </span>
+
+                <h3>{{ service.name }}</h3>
+
+                <p>{{ service.description }}</p>
+              </div>
+
+              <div class="service-card__meta">
+                <strong>{{ service.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+                <span>{{ service.durationMinutes }} min</span>
+              </div>
+            </div>
+
+            <div class="service-card__actions">
+              <button type="button" class="edit-button" (click)="editService(service)">
+                Editar
+              </button>
+
+              <button
+                *ngIf="service.active"
+                type="button"
+                class="deactivate-button"
+                [disabled]="changingStatusId === service.id"
+                (click)="deactivateService(service)"
+              >
+                {{ changingStatusId === service.id ? 'Procesando...' : 'Desactivar' }}
+              </button>
+
+              <button
+                *ngIf="!service.active"
+                type="button"
+                class="activate-button"
+                [disabled]="changingStatusId === service.id"
+                (click)="activateService(service)"
+              >
+                {{ changingStatusId === service.id ? 'Procesando...' : 'Activar' }}
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

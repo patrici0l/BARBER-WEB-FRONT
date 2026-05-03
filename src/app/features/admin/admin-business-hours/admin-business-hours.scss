@@ -1,4 +1,4 @@
-.admin-page {
+.admin-hours-page {
     padding: 64px 0;
     background: #111111;
 
@@ -9,7 +9,7 @@
         gap: 24px;
         margin-bottom: 32px;
 
-        span {
+        >span {
             flex: 0 0 auto;
             color: #d7a84f;
             font-weight: 900;
@@ -38,7 +38,7 @@
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -67,7 +67,7 @@
 .admin-actions {
     display: flex;
     justify-content: flex-end;
-    margin: 0 0 20px;
+    margin-bottom: 20px;
 
     button {
         min-height: 42px;
@@ -85,52 +85,65 @@
     }
 }
 
-.table-card {
-    overflow-x: auto;
-    border-radius: 24px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 860px;
-    }
-
-    th,
-    td {
-        padding: 18px;
-        text-align: left;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    th {
-        color: #d7a84f;
-        font-size: 0.78rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    td {
-        color: #eeeeee;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: 0;
-    }
+.hours-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
 }
 
-.client-cell {
+.hour-card {
     display: grid;
-    gap: 4px;
+    gap: 22px;
+    padding: 26px;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at top right, rgba(215, 168, 79, 0.1), transparent 32%),
+        #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
-    strong {
-        color: #ffffff;
+    &__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+
+        h2 {
+            margin: 12px 0 0;
+            font-size: 1.5rem;
+        }
     }
 
-    span {
-        color: #aaaaaa;
-        font-size: 0.9rem;
+    &__form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+
+        label {
+            display: grid;
+            gap: 8px;
+            color: #dddddd;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            min-height: 46px;
+            padding: 0 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #111111;
+            color: #ffffff;
+            outline: none;
+
+            &:focus {
+                border-color: #d7a84f;
+            }
+
+            &:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+            }
+        }
     }
 }
 
@@ -141,38 +154,24 @@
     font-size: 0.78rem;
     font-weight: 900;
 
-    &--booked {
-        background: rgba(215, 168, 79, 0.12);
-        color: #d7a84f;
-    }
-
-    &--cancelled {
-        background: rgba(255, 80, 80, 0.12);
-        color: #ffb4b4;
-    }
-
-    &--completed {
+    &--active {
         background: rgba(80, 255, 160, 0.1);
         color: #a6ffd0;
     }
+
+    &--inactive {
+        background: rgba(255, 80, 80, 0.12);
+        color: #ffb4b4;
+    }
 }
 
-.table-actions {
-    text-align: right !important;
-}
-
-.cancel-button {
-    min-height: 36px;
-    padding: 0 14px;
+.toggle-button,
+.save-button {
+    min-height: 40px;
+    padding: 0 16px;
     border: 0;
     border-radius: 999px;
-    background: rgba(255, 80, 80, 0.14);
-    color: #ffb4b4;
     font-weight: 900;
-
-    &:hover {
-        filter: brightness(1.12);
-    }
 
     &:disabled {
         opacity: 0.5;
@@ -180,9 +179,21 @@
     }
 }
 
-.muted {
-    color: #777777;
-    font-size: 0.9rem;
+.toggle-button {
+    &--active {
+        background: rgba(255, 80, 80, 0.14);
+        color: #ffb4b4;
+    }
+
+    &--inactive {
+        background: rgba(80, 255, 160, 0.1);
+        color: #a6ffd0;
+    }
+}
+
+.save-button {
+    background: #d7a84f;
+    color: #111111;
 }
 
 .state-card,
@@ -202,12 +213,6 @@
     gap: 8px;
     margin-bottom: 20px;
 
-    a {
-        color: #d7a84f;
-        font-weight: 900;
-        text-decoration: underline;
-    }
-
     &--error {
         border-color: rgba(255, 80, 80, 0.25);
         background: rgba(255, 80, 80, 0.08);
@@ -221,21 +226,29 @@
     }
 }
 
-@media (max-width: 900px) {
-    .admin-page {
+@media (max-width: 860px) {
+    .admin-hours-page {
         &__header {
             align-items: flex-start;
             flex-direction: column;
         }
     }
 
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .hours-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 560px) {
-    .stats-grid {
+@media (max-width: 620px) {
+
+    .stats-grid,
+    .hour-card__form {
         grid-template-columns: 1fr;
+    }
+
+    .hour-card {
+        &__top {
+            flex-direction: column;
+        }
     }
 }

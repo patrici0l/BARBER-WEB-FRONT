@@ -6,6 +6,7 @@ import { Footer } from './shared/components/footer/footer';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [
     RouterOutlet,
     Navbar,

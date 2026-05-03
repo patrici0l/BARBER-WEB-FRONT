@@ -6,6 +6,7 @@ import { Product } from '../../../shared/models/product.model';
 
 @Component({
   selector: 'app-product-list',
+  standalone: true,
   imports: [
     NgIf,
     NgFor,

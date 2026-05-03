@@ -1,4 +1,101 @@
-<section class="container page-placeholder">
-  <h1>Reservar turno</h1>
-  <p>Aquí construiremos el formulario de reserva y disponibilidad.</p>
+<section class="appointment-page">
+  <div class="container">
+    <div class="appointment-page__header">
+      <span>Reservas</span>
+      <h1>Reserva tu próximo turno</h1>
+      <p>Selecciona un servicio, elige una fecha y consulta los horarios disponibles.</p>
+    </div>
+
+    <div class="appointment-layout">
+      <form class="appointment-form" (ngSubmit)="createAppointment()">
+        <h2>Datos de la reserva</h2>
+
+        <div *ngIf="errorMessage" class="message message--error">
+          {{ errorMessage }}
+
+          <a *ngIf="errorMessage === 'Debes iniciar sesión para reservar.'" routerLink="/login">
+            Ir al login
+          </a>
+        </div>
+
+        <div *ngIf="successMessage" class="message message--success">
+          {{ successMessage }}
+        </div>
+
+        <label>
+          Servicio
+          <select
+            name="serviceId"
+            [(ngModel)]="selectedServiceId"
+            (change)="loadAvailability()"
+            [disabled]="loadingServices"
+          >
+            <option [ngValue]="null">Selecciona un servicio</option>
+            <option *ngFor="let service of services" [ngValue]="service.id">
+              {{ service.name }} - {{ service.durationMinutes }} min
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Fecha
+          <input
+            type="date"
+            name="selectedDate"
+            [(ngModel)]="selectedDate"
+            (change)="loadAvailability()"
+          />
+        </label>
+
+        <div *ngIf="selectedService" class="selected-service">
+          <h3>{{ selectedService.name }}</h3>
+          <p>{{ selectedService.description }}</p>
+          <strong>{{ selectedService.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="creatingAppointment || !selectedStartTime"
+        >
+          {{ creatingAppointment ? 'Reservando...' : 'Confirmar reserva' }}
+        </button>
+      </form>
+
+      <div class="availability-panel">
+        <div class="availability-panel__header">
+          <h2>Horarios disponibles</h2>
+          <p *ngIf="selectedDate">Fecha seleccionada: {{ selectedDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div *ngIf="loadingAvailability" class="state-card">Consultando horarios...</div>
+
+        <div
+          *ngIf="!loadingAvailability && selectedServiceId && slots.length === 0"
+          class="state-card"
+        >
+          No hay horarios disponibles para esta fecha.
+        </div>
+
+        <div *ngIf="!loadingAvailability && !selectedServiceId" class="state-card">
+          Selecciona un servicio para consultar disponibilidad.
+        </div>
+
+        <div *ngIf="!loadingAvailability && slots.length > 0" class="slots-grid">
+          <button
+            type="button"
+            *ngFor="let slot of slots"
+            class="slot-button"
+            [class.slot-button--selected]="selectedStartTime === slot.startTime"
+            [class.slot-button--disabled]="!slot.available"
+            [disabled]="!slot.available"
+            (click)="selectSlot(slot)"
+          >
+            <span>{{ slot.startTime }}</span>
+            <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

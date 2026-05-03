@@ -1,0 +1,76 @@
+<section class="my-appointments-page">
+  <div class="container">
+    <div class="my-appointments-page__header">
+      <span>Cliente</span>
+      <h1>Mis reservas</h1>
+      <p>Consulta tus turnos activos, cancelados o completados.</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+
+      <a *ngIf="errorMessage === 'Debes iniciar sesión para ver tus reservas.'" routerLink="/login">
+        Ir al login
+      </a>
+    </div>
+
+    <div *ngIf="successMessage" class="message message--success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="loading" class="state-card">Cargando tus reservas...</div>
+
+    <div *ngIf="!loading && !errorMessage && appointments.length === 0" class="empty-card">
+      <h2>No tienes reservas todavía</h2>
+      <p>Cuando reserves un turno, aparecerá en esta sección.</p>
+      <a routerLink="/reservar">Reservar ahora</a>
+    </div>
+
+    <div *ngIf="!loading && appointments.length > 0" class="appointments-grid">
+      <article class="appointment-card" *ngFor="let appointment of appointments">
+        <div class="appointment-card__top">
+          <div>
+            <span class="appointment-card__eyebrow">
+              {{ appointment.appointmentDate | date: 'dd/MM/yyyy' }}
+            </span>
+
+            <h2>{{ getServiceName(appointment) }}</h2>
+          </div>
+
+          <span
+            class="appointment-card__status"
+            [ngClass]="{
+              'appointment-card__status--booked': appointment.status === 'BOOKED',
+              'appointment-card__status--cancelled': appointment.status === 'CANCELLED',
+              'appointment-card__status--completed': appointment.status === 'COMPLETED',
+            }"
+          >
+            {{ getStatusLabel(appointment.status) }}
+          </span>
+        </div>
+
+        <div class="appointment-card__details">
+          <div>
+            <small>Hora inicio</small>
+            <strong>{{ appointment.startTime }}</strong>
+          </div>
+
+          <div>
+            <small>Hora fin</small>
+            <strong>{{ appointment.endTime }}</strong>
+          </div>
+        </div>
+
+        <button
+          *ngIf="canCancel(appointment)"
+          type="button"
+          class="cancel-button"
+          [disabled]="cancellingId === appointment.id"
+          (click)="cancelAppointment(appointment)"
+        >
+          {{ cancellingId === appointment.id ? 'Cancelando...' : 'Cancelar reserva' }}
+        </button>
+      </article>
+    </div>
+  </div>
+</section>

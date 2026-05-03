@@ -1,0 +1,211 @@
+<section class="admin-products-page">
+  <div class="container">
+    <div class="admin-products-page__header">
+      <span>Panel administrativo</span>
+
+      <div>
+        <h1>Gestión de productos</h1>
+        <p>Crea, edita, activa o desactiva productos para el catálogo público.</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Total</span>
+        <strong>{{ products.length }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Activos</span>
+        <strong>{{ activeProducts }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Disponibles</span>
+        <strong>{{ availableProducts }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Inactivos</span>
+        <strong>{{ inactiveProducts }}</strong>
+      </article>
+    </div>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="message message--success">
+      {{ successMessage }}
+    </div>
+
+    <div class="admin-layout">
+      <form class="product-form" (ngSubmit)="submit()">
+        <h2>{{ editingProductId ? 'Editar producto' : 'Crear producto' }}</h2>
+
+        <label>
+          Nombre
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="form.name"
+            placeholder="Ej: Pomada para cabello"
+          />
+        </label>
+
+        <label>
+          Descripción
+          <textarea
+            name="description"
+            [(ngModel)]="form.description"
+            rows="4"
+            placeholder="Describe el producto"
+          ></textarea>
+        </label>
+
+        <div class="form-grid">
+          <label>
+            Precio
+            <input type="number" name="price" [(ngModel)]="form.price" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Stock
+            <input type="number" name="stock" [(ngModel)]="form.stock" min="0" step="1" />
+          </label>
+        </div>
+
+        <label>
+          URL de imagen
+          <input
+            type="url"
+            name="imageUrl"
+            [(ngModel)]="form.imageUrl"
+            placeholder="https://example.com/image.jpg"
+          />
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" name="active" [(ngModel)]="form.active" />
+          Producto activo
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="saving">
+            {{
+              saving ? 'Guardando...' : editingProductId ? 'Actualizar producto' : 'Crear producto'
+            }}
+          </button>
+
+          <button
+            *ngIf="editingProductId"
+            type="button"
+            class="secondary-button"
+            (click)="cancelEdit()"
+            [disabled]="saving"
+          >
+            Cancelar edición
+          </button>
+        </div>
+      </form>
+
+      <div class="products-panel">
+        <div class="products-panel__header">
+          <h2>Productos registrados</h2>
+
+          <button type="button" (click)="loadProducts()" [disabled]="loading">
+            {{ loading ? 'Actualizando...' : 'Actualizar' }}
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="state-card">Cargando productos...</div>
+
+        <div *ngIf="!loading && products.length === 0" class="state-card">
+          No hay productos registrados.
+        </div>
+
+        <div *ngIf="!loading && products.length > 0" class="products-list">
+          <article class="product-card" *ngFor="let product of products">
+            <div class="product-card__image">
+              <img *ngIf="product.imageUrl" [src]="product.imageUrl" [alt]="product.name" />
+
+              <div *ngIf="!product.imageUrl" class="product-card__placeholder">Sin imagen</div>
+            </div>
+
+            <div class="product-card__content">
+              <div class="product-card__main">
+                <div>
+                  <div class="badges-row">
+                    <span
+                      class="status-badge"
+                      [ngClass]="{
+                        'status-badge--active': product.active,
+                        'status-badge--inactive': !product.active,
+                      }"
+                    >
+                      {{ product.active ? 'Activo' : 'Inactivo' }}
+                    </span>
+
+                    <span
+                      class="status-badge"
+                      [ngClass]="{
+                        'status-badge--available': product.available,
+                        'status-badge--unavailable': !product.available,
+                      }"
+                    >
+                      {{ product.available ? 'Disponible' : 'Agotado' }}
+                    </span>
+                  </div>
+
+                  <h3>{{ product.name }}</h3>
+
+                  <p>{{ product.description }}</p>
+                </div>
+
+                <div class="product-card__meta">
+                  <strong>{{ product.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
+                  <span>Stock: {{ product.stock }}</span>
+                </div>
+              </div>
+
+              <div class="product-card__actions">
+                <button type="button" class="edit-button" (click)="editProduct(product)">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="stock-button"
+                  [disabled]="updatingStockId === product.id"
+                  (click)="updateStock(product)"
+                >
+                  {{ updatingStockId === product.id ? 'Actualizando...' : 'Stock' }}
+                </button>
+
+                <button
+                  *ngIf="product.active"
+                  type="button"
+                  class="deactivate-button"
+                  [disabled]="changingStatusId === product.id"
+                  (click)="deactivateProduct(product)"
+                >
+                  {{ changingStatusId === product.id ? 'Procesando...' : 'Desactivar' }}
+                </button>
+
+                <button
+                  *ngIf="!product.active"
+                  type="button"
+                  class="activate-button"
+                  [disabled]="changingStatusId === product.id"
+                  (click)="activateProduct(product)"
+                >
+                  {{ changingStatusId === product.id ? 'Procesando...' : 'Activar' }}
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

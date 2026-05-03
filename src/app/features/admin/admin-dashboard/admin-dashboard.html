@@ -1,4 +1,124 @@
-<section class="container page-placeholder">
-  <h1>Panel admin</h1>
-  <p>Aquí gestionaremos servicios, productos, horarios y reservas.</p>
+<section class="admin-page">
+  <div class="container">
+    <div class="admin-page__header">
+      <span>Panel administrativo</span>
+
+      <div>
+        <h1>Reservas</h1>
+        <p>Consulta y gestiona las reservas realizadas por los clientes.</p>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+
+      <a
+        *ngIf="errorMessage === 'No tienes permisos para acceder al panel admin.'"
+        routerLink="/login"
+      >
+        Ir al login
+      </a>
+    </div>
+
+    <div *ngIf="successMessage" class="message message--success">
+      {{ successMessage }}
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Total</span>
+        <strong>{{ totalAppointments }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Reservadas</span>
+        <strong>{{ bookedAppointments }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Canceladas</span>
+        <strong>{{ cancelledAppointments }}</strong>
+      </article>
+
+      <article class="stat-card">
+        <span>Completadas</span>
+        <strong>{{ completedAppointments }}</strong>
+      </article>
+    </div>
+
+    <div class="admin-actions">
+      <button type="button" (click)="loadAppointments()" [disabled]="loading">
+        {{ loading ? 'Actualizando...' : 'Actualizar reservas' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="state-card">Cargando reservas...</div>
+
+    <div *ngIf="!loading && !errorMessage && appointments.length === 0" class="state-card">
+      No hay reservas registradas.
+    </div>
+
+    <div *ngIf="!loading && appointments.length > 0" class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Horario</th>
+            <th>Servicio</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th class="table-actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let appointment of appointments">
+            <td>
+              {{ appointment.appointmentDate | date: 'dd/MM/yyyy' }}
+            </td>
+
+            <td>{{ appointment.startTime }} - {{ appointment.endTime }}</td>
+
+            <td>
+              {{ getServiceName(appointment) }}
+            </td>
+
+            <td>
+              <div class="client-cell">
+                <strong>{{ getClientName(appointment) }}</strong>
+                <span>{{ getClientEmail(appointment) }}</span>
+              </div>
+            </td>
+
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-badge--booked': appointment.status === 'BOOKED',
+                  'status-badge--cancelled': appointment.status === 'CANCELLED',
+                  'status-badge--completed': appointment.status === 'COMPLETED',
+                }"
+              >
+                {{ getStatusLabel(appointment.status) }}
+              </span>
+            </td>
+
+            <td class="table-actions">
+              <button
+                *ngIf="canCancel(appointment)"
+                type="button"
+                class="cancel-button"
+                [disabled]="cancellingId === appointment.id"
+                (click)="cancelAppointment(appointment)"
+              >
+                {{ cancellingId === appointment.id ? 'Cancelando...' : 'Cancelar' }}
+              </button>
+
+              <span *ngIf="!canCancel(appointment)" class="muted"> Sin acciones </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </section>

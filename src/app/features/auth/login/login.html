@@ -1,4 +1,51 @@
-<section class="container page-placeholder">
-  <h1>Iniciar sesión</h1>
-  <p>Aquí construiremos el login con JWT.</p>
+<section class="auth-page">
+  <div class="auth-card">
+    <span class="auth-card__eyebrow">Acceso</span>
+
+    <h1>Iniciar sesión</h1>
+
+    <p>Ingresa con tu cuenta para reservar turnos y consultar tus reservas.</p>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="form.email"
+          placeholder="cliente@email.com"
+          autocomplete="email"
+        />
+      </label>
+
+      <label>
+        Contraseña
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="form.password"
+          placeholder="Tu contraseña"
+          autocomplete="current-password"
+        />
+      </label>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+      </button>
+    </form>
+
+    <div class="auth-card__footer">
+      <span>¿No tienes cuenta?</span>
+      <a routerLink="/registro">Crear cuenta</a>
+    </div>
+
+    <div class="auth-card__demo">
+      <strong>Admin de prueba:</strong>
+      <span>admin@barberia.com / admin123</span>
+    </div>
+  </div>
 </section>

@@ -6,7 +6,7 @@ import { AppointmentService } from '../../../core/services/appointment';
 import { Appointment } from '../../../shared/models/appointment.model';
 
 @Component({
-  selector: 'app-admin-dashboard',
+  selector: 'app-my-appointments',
   standalone: true,
   imports: [
     NgIf,
@@ -15,15 +15,14 @@ import { Appointment } from '../../../shared/models/appointment.model';
     DatePipe,
     RouterLink
   ],
-  templateUrl: './admin-dashboard.html',
-  styleUrl: './admin-dashboard.scss'
+  templateUrl: './my-appointments.html',
+  styleUrl: './my-appointments.scss'
 })
-export class AdminDashboard implements OnInit {
+export class MyAppointments implements OnInit {
 
   appointments: Appointment[] = [];
   loading = false;
   cancellingId: number | null = null;
-
   errorMessage = '';
   successMessage = '';
 
@@ -38,23 +37,23 @@ export class AdminDashboard implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.appointmentService.getAdminAppointments().subscribe({
+    this.appointmentService.getMyAppointments().subscribe({
       next: (appointments) => {
         this.appointments = appointments;
         this.loading = false;
       },
       error: (error) => {
-        console.error('ADMIN APPOINTMENTS ERROR:', error);
+        console.error('MY APPOINTMENTS ERROR:', error);
         this.loading = false;
 
         if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No tienes permisos para acceder al panel admin.';
+          this.errorMessage = 'Debes iniciar sesión para ver tus reservas.';
           return;
         }
 
         this.errorMessage =
           error?.error?.message ||
-          `No se pudieron cargar las reservas. Status: ${error?.status}`;
+          `No se pudieron cargar tus reservas. Status: ${error?.status}`;
       }
     });
   }
@@ -81,7 +80,7 @@ export class AdminDashboard implements OnInit {
         this.loadAppointments();
       },
       error: (error) => {
-        console.error('ADMIN CANCEL APPOINTMENT ERROR:', error);
+        console.error('CANCEL APPOINTMENT ERROR:', error);
         this.cancellingId = null;
 
         this.errorMessage =
@@ -91,32 +90,8 @@ export class AdminDashboard implements OnInit {
     });
   }
 
-  get totalAppointments(): number {
-    return this.appointments.length;
-  }
-
-  get bookedAppointments(): number {
-    return this.appointments.filter(appointment => appointment.status === 'BOOKED').length;
-  }
-
-  get cancelledAppointments(): number {
-    return this.appointments.filter(appointment => appointment.status === 'CANCELLED').length;
-  }
-
-  get completedAppointments(): number {
-    return this.appointments.filter(appointment => appointment.status === 'COMPLETED').length;
-  }
-
   getServiceName(appointment: Appointment): string {
     return appointment.service?.name || appointment.serviceName || 'Servicio';
-  }
-
-  getClientName(appointment: Appointment): string {
-    return appointment.userName || appointment.clientName || 'Cliente';
-  }
-
-  getClientEmail(appointment: Appointment): string {
-    return appointment.userEmail || appointment.clientEmail || 'Sin email';
   }
 
   getStatusLabel(status: string): string {

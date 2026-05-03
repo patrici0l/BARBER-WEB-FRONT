@@ -1,4 +1,42 @@
-<section class="container page-placeholder">
-  <h1>Servicios</h1>
-  <p>Aquí mostraremos los servicios de barbería desde el backend.</p>
+<section class="services-page">
+  <div class="container">
+    <div class="services-page__header">
+      <span>Servicios</span>
+      <h1>Elige tu próximo servicio</h1>
+      <p>
+        Consulta precios, duración y disponibilidad para reservar tu turno.
+      </p>
+    </div>
+
+    <div *ngIf="loading" class="state-card">
+      Cargando servicios...
+    </div>
+
+    <div *ngIf="errorMessage" class="state-card state-card--error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && services.length === 0" class="state-card">
+      No hay servicios disponibles por ahora.
+    </div>
+
+    <div *ngIf="!loading && !errorMessage && services.length > 0" class="services-grid">
+      <article class="service-card" *ngFor="let service of services">
+        <div>
+          <span class="service-card__duration">
+            {{ service.durationMinutes }} min
+          </span>
+
+          <h2>{{ service.name }}</h2>
+
+          <p>{{ service.description }}</p>
+        </div>
+
+        <div class="service-card__footer">
+          <strong>{{ service.price | currency:'USD':'symbol':'1.2-2' }}</strong>
+          <a routerLink="/reservar">Reservar</a>
+        </div>
+      </article>
+    </div>
+  </div>
 </section>

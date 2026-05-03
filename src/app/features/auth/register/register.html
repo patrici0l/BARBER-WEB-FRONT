@@ -1,4 +1,68 @@
-<section class="container page-placeholder">
-  <h1>Registro</h1>
-  <p>Aquí construiremos el registro de clientes.</p>
+<section class="auth-page">
+  <div class="auth-card">
+    <span class="auth-card__eyebrow">Registro</span>
+
+    <h1>Crear cuenta</h1>
+
+    <p>Regístrate para reservar turnos y recibir futuras notificaciones.</p>
+
+    <div *ngIf="errorMessage" class="message message--error">
+      {{ errorMessage }}
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      <label>
+        Nombre
+        <input
+          type="text"
+          name="name"
+          [(ngModel)]="form.name"
+          placeholder="Tu nombre"
+          autocomplete="name"
+        />
+      </label>
+
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="form.email"
+          placeholder="cliente@email.com"
+          autocomplete="email"
+        />
+      </label>
+
+      <label>
+        Contraseña
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="form.password"
+          placeholder="Mínimo 6 caracteres"
+          autocomplete="new-password"
+        />
+      </label>
+
+      <label>
+        Confirmar contraseña
+        <input
+          type="password"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Repite tu contraseña"
+          autocomplete="new-password"
+        />
+      </label>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Creando cuenta...' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <div class="auth-card__footer">
+      <span>¿Ya tienes cuenta?</span>
+      <a routerLink="/login">Iniciar sesión</a>
+    </div>
+  </div>
 </section>
