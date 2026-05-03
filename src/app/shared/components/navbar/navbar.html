@@ -3,7 +3,7 @@
     <a routerLink="/" class="navbar__brand"> Barbería </a>
 
     <nav class="navbar__links">
-      <!-- Enlaces Generales -->
+      <!-- Enlaces Públicos -->
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         Inicio
       </a>
@@ -12,27 +12,26 @@
 
       <a routerLink="/productos" routerLinkActive="active"> Productos </a>
 
-      <a routerLink="/reservar" routerLinkActive="active"> Reservar </a>
+      <!-- Enlaces de Usuario Autenticado -->
+      <a *ngIf="isLoggedIn" routerLink="/reservar" routerLinkActive="active"> Reservar </a>
 
-      <!-- Enlaces de Usuario -->
       <a *ngIf="isLoggedIn" routerLink="/mis-reservas" routerLinkActive="active"> Mis reservas </a>
 
-      <!-- Sección Admin -->
-      <a *ngIf="isLoggedIn" routerLink="/admin" routerLinkActive="active"> Admin </a>
+      <!-- Panel de Administración (Solo para Admin) -->
+      <ng-container *ngIf="isAdmin">
+        <a
+          routerLink="/admin"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          Admin
+        </a>
+        <a routerLink="/admin/servicios" routerLinkActive="active"> Admin servicios </a>
+        <a routerLink="/admin/productos" routerLinkActive="active"> Admin productos </a>
+        <a routerLink="/admin/horarios" routerLinkActive="active"> Admin horarios </a>
+      </ng-container>
 
-      <a *ngIf="isLoggedIn" routerLink="/admin/servicios" routerLinkActive="active">
-        Admin servicios
-      </a>
-
-      <a *ngIf="isLoggedIn" routerLink="/admin/productos" routerLinkActive="active">
-        Admin productos
-      </a>
-
-      <a *ngIf="isLoggedIn" routerLink="/admin/horarios" routerLinkActive="active">
-        Admin horarios
-      </a>
-
-      <!-- Auth -->
+      <!-- Control de Acceso / Login -->
       <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active" class="navbar__login">
         Iniciar sesión
       </a>

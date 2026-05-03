@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-
 import { AuthService } from '../../../core/services/auth';
 
 @Component({
@@ -22,14 +21,23 @@ export class Navbar {
     private readonly router: Router
   ) { }
 
+  /**
+   * Verifica si el usuario tiene una sesión activa
+   */
   get isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
   }
 
+  /**
+   * Verifica si el usuario tiene rol de administrador
+   */
   get isAdmin(): boolean {
     return this.authService.isAdmin();
   }
 
+  /**
+   * Cierra la sesión y redirige al inicio
+   */
   logout(): void {
     this.authService.logout();
     this.router.navigateByUrl('/');
