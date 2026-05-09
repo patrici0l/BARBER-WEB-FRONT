@@ -29,7 +29,7 @@ export class AdminDashboard implements OnInit {
   appointments: Appointment[] = [];
   loading = false;
   cancellingId: number | null = null;
-  completingId: number | null = null; // Añadido para feedback de completar
+  completingId: number | null = null;
 
   // --- Filtros ---
   statusFilter = 'ALL';
@@ -62,11 +62,7 @@ export class AdminDashboard implements OnInit {
       error: (error) => {
         console.error('ADMIN APPOINTMENTS ERROR:', error);
         this.loading = false;
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No tienes permisos para acceder al panel admin.';
-          return;
-        }
-        this.errorMessage = error?.error?.message || `No se pudieron cargar las reservas.`;
+        this.handleError(error, 'No se pudieron cargar las reservas.');
       }
     });
   }
@@ -76,6 +72,8 @@ export class AdminDashboard implements OnInit {
     if (!confirm('¿Seguro que deseas cancelar esta reserva?')) return;
 
     this.cancellingId = appointment.id;
+    this.errorMessage = '';
+
     this.appointmentService.cancelAppointment(appointment.id).subscribe({
       next: () => {
         this.cancellingId = null;
@@ -83,15 +81,36 @@ export class AdminDashboard implements OnInit {
         this.loadAppointments();
       },
       error: (error) => {
+        console.error('CANCEL APPOINTMENT ERROR:', error);
         this.cancellingId = null;
-        this.toastService.error('Error al cancelar.');
+        this.handleError(error, 'Error al cancelar la reserva.');
       }
     });
   }
 
-  // Método opcional si quieres implementar el botón completar del plan
+  /**
+   * Manejo centralizado de errores HTTP
+   */
+  private handleError(error: any, defaultMessage: string): void {
+    if (error.status === 401) {
+      this.errorMessage = 'Tu sesión expiró o no se envió el token. Cierra sesión e inicia nuevamente.';
+      return;
+    }
+
+    if (error.status === 403) {
+      this.errorMessage = 'Tu usuario no tiene permisos de administrador para realizar esta acción.';
+      return;
+    }
+
+    this.errorMessage = error?.error?.message || `${defaultMessage} (Status: ${error?.status || '0'})`;
+
+    // Si es un error crítico (como cancelar), también mostramos un toast
+    if (defaultMessage.includes('Error al cancelar')) {
+      this.toastService.error(this.errorMessage);
+    }
+  }
+
   completeAppointment(appointment: Appointment): void {
-    // Aquí iría tu lógica de servicio para completar
     this.toastService.info('Funcionalidad de completar en desarrollo');
   }
 
@@ -104,7 +123,7 @@ export class AdminDashboard implements OnInit {
     }, 50);
   }
 
-  // --- Lógica de Próximas Reservas (NUEVO) ---
+  // --- Lógica de Tiempos y Próximas Reservas ---
   get nowDate(): string {
     const now = new Date();
     const month = String(now.getMonth() + 1).padStart(2, '0');

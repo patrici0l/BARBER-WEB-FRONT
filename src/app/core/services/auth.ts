@@ -41,7 +41,7 @@ export class AuthService {
       userId: response.userId,
       name: response.name,
       email: response.email,
-      role: response.role
+      role: this.normalizeRole(response.role) // Normalización aplicada aquí
     };
 
     localStorage.setItem(this.userKey, JSON.stringify(currentUser));
@@ -88,20 +88,21 @@ export class AuthService {
 
     const currentUser = this.getCurrentUser();
 
+    // Verificación por objeto en sesión (ya normalizado)
     if (currentUser?.role === 'ADMIN') {
       return true;
     }
 
+    // Verificación de respaldo por Token (por si el objeto no está en localstorage)
     const token = this.getToken();
-
     if (!token) {
       return false;
     }
 
     const payload = this.decodeToken(token);
-    const role = payload?.role;
+    const roleFromToken = payload?.role;
 
-    return role === 'ADMIN' || role === 'ROLE_ADMIN';
+    return roleFromToken === 'ADMIN' || roleFromToken === 'ROLE_ADMIN';
   }
 
   getUserEmail(): string | null {
@@ -112,19 +113,31 @@ export class AuthService {
     }
 
     const token = this.getToken();
-
     if (!token) {
       return null;
     }
 
     const payload = this.decodeToken(token);
-
     return payload?.sub || payload?.email || null;
   }
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+  }
+
+  // --- Métodos Privados de Utilidad ---
+
+  private normalizeRole(role: string): UserRole {
+    if (role === 'ROLE_ADMIN') {
+      return 'ADMIN';
+    }
+
+    if (role === 'ROLE_CLIENT') {
+      return 'CLIENT';
+    }
+
+    return role as UserRole;
   }
 
   private decodeToken(token: string): any | null {
@@ -159,6 +172,7 @@ export class AuthService {
       return false;
     }
 
+    // El exp de JWT está en segundos, Date.now() en milisegundos
     return Date.now() >= payload.exp * 1000;
   }
 }

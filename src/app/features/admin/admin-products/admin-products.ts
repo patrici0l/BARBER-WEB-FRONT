@@ -23,7 +23,6 @@ import { Alert } from '../../../shared/components/alert/alert';
 export class AdminProducts implements OnInit {
 
   products: Product[] = [];
-
   form: ProductRequest = this.getEmptyForm();
 
   editingProductId: number | null = null;
@@ -57,15 +56,7 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('ADMIN PRODUCTS ERROR:', error);
         this.loading = false;
-
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No tienes permisos para gestionar productos.';
-          return;
-        }
-
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudieron cargar los productos. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudieron cargar los productos.');
       }
     });
   }
@@ -74,7 +65,7 @@ export class AdminProducts implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (!this.form.name || !this.form.description || !this.form.price && this.form.price !== 0 || this.form.stock === null || this.form.stock === undefined) {
+    if (!this.form.name || !this.form.description || (this.form.price === null || this.form.price === undefined) || (this.form.stock === null || this.form.stock === undefined)) {
       this.errorMessage = 'Completa todos los campos obligatorios.';
       return;
     }
@@ -119,9 +110,7 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('CREATE PRODUCT ERROR:', error);
         this.saving = false;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo crear el producto. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo crear el producto.');
       }
     });
   }
@@ -137,16 +126,13 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('UPDATE PRODUCT ERROR:', error);
         this.saving = false;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo actualizar el producto. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo actualizar el producto.');
       }
     });
   }
 
   editProduct(product: Product): void {
     this.editingProductId = product.id;
-
     this.form = {
       name: product.name,
       description: product.description,
@@ -156,10 +142,7 @@ export class AdminProducts implements OnInit {
       active: product.active
     };
 
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   cancelEdit(): void {
@@ -169,7 +152,6 @@ export class AdminProducts implements OnInit {
   activateProduct(product: Product): void {
     this.changingStatusId = product.id;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.productService.activateProduct(product.id).subscribe({
       next: () => {
@@ -180,9 +162,7 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('ACTIVATE PRODUCT ERROR:', error);
         this.changingStatusId = null;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo activar el producto. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo activar el producto.');
       }
     });
   }
@@ -190,7 +170,6 @@ export class AdminProducts implements OnInit {
   deactivateProduct(product: Product): void {
     this.changingStatusId = product.id;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.productService.deactivateProduct(product.id).subscribe({
       next: () => {
@@ -201,9 +180,7 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('DEACTIVATE PRODUCT ERROR:', error);
         this.changingStatusId = null;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo desactivar el producto. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo desactivar el producto.');
       }
     });
   }
@@ -211,12 +188,9 @@ export class AdminProducts implements OnInit {
   updateStock(product: Product): void {
     const stockValue = prompt(`Nuevo stock para "${product.name}"`, String(product.stock));
 
-    if (stockValue === null) {
-      return;
-    }
+    if (stockValue === null) return;
 
     const stock = Number(stockValue);
-
     if (Number.isNaN(stock) || stock < 0) {
       this.errorMessage = 'El stock ingresado no es válido.';
       return;
@@ -224,7 +198,6 @@ export class AdminProducts implements OnInit {
 
     this.updatingStockId = product.id;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.productService.updateStock(product.id, { stock }).subscribe({
       next: () => {
@@ -235,9 +208,7 @@ export class AdminProducts implements OnInit {
       error: (error) => {
         console.error('UPDATE STOCK ERROR:', error);
         this.updatingStockId = null;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo actualizar el stock. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo actualizar el stock.');
       }
     });
   }
@@ -245,18 +216,16 @@ export class AdminProducts implements OnInit {
   resetForm(): void {
     this.editingProductId = null;
     this.form = this.getEmptyForm();
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   get activeProducts(): number {
-    return this.products.filter(product => product.active).length;
+    return this.products.filter(p => p.active).length;
   }
 
   get inactiveProducts(): number {
-    return this.products.filter(product => !product.active).length;
-  }
-
-  get availableProducts(): number {
-    return this.products.filter(product => product.available).length;
+    return this.products.filter(p => !p.active).length;
   }
 
   private getEmptyForm(): ProductRequest {
@@ -268,5 +237,23 @@ export class AdminProducts implements OnInit {
       imageUrl: '',
       active: true
     };
+  }
+
+  /**
+   * Manejo centralizado de errores para mayor precisión
+   */
+  private handleError(error: any, defaultMessage: string): void {
+    if (error.status === 401) {
+      this.errorMessage = 'Tu sesión expiró o no se envió el token. Cierra sesión e inicia nuevamente.';
+      return;
+    }
+
+    if (error.status === 403) {
+      this.errorMessage = 'Tu usuario no tiene permisos de administrador para esta acción.';
+      return;
+    }
+
+    // Si el backend envía un mensaje específico, lo usamos; si no, el default con el status
+    this.errorMessage = error?.error?.message || `${defaultMessage} Status: ${error?.status || 'Unknown'}`;
   }
 }

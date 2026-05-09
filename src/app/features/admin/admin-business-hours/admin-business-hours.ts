@@ -62,15 +62,7 @@ export class AdminBusinessHours implements OnInit {
       error: (error) => {
         console.error('ADMIN BUSINESS HOURS ERROR:', error);
         this.loading = false;
-
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'Tu usuario no tiene permisos reales de administrador en el backend. Cierra sesión, verifica el rol en base de datos e inicia sesión nuevamente.';
-          return;
-        }
-
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudieron cargar los horarios. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudieron cargar los horarios.');
       }
     });
   }
@@ -109,15 +101,7 @@ export class AdminBusinessHours implements OnInit {
       error: (error) => {
         console.error('UPDATE BUSINESS HOUR ERROR:', error);
         this.savingId = null;
-
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No se guardó el horario porque el backend no reconoce tu usuario como administrador.';
-          return;
-        }
-
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo actualizar el horario. Status: ${error?.status}`;
+        this.handleError(error, `No se pudo actualizar el horario de ${this.getDayLabel(businessHour.dayOfWeek)}.`);
       }
     });
   }
@@ -161,5 +145,22 @@ export class AdminBusinessHours implements OnInit {
     return [...businessHours].sort((a, b) => {
       return this.dayOrder.indexOf(a.dayOfWeek) - this.dayOrder.indexOf(b.dayOfWeek);
     });
+  }
+
+  /**
+   * Manejo centralizado de errores HTTP para mostrar mensajes precisos
+   */
+  private handleError(error: any, defaultMessage: string): void {
+    if (error.status === 401) {
+      this.errorMessage = 'Tu sesión expiró o no se envió el token. Cierra sesión e inicia nuevamente.';
+      return;
+    }
+
+    if (error.status === 403) {
+      this.errorMessage = 'Tu usuario no tiene permisos de administrador para gestionar los horarios.';
+      return;
+    }
+
+    this.errorMessage = error?.error?.message || `${defaultMessage} Status: ${error?.status || 'Unknown'}`;
   }
 }

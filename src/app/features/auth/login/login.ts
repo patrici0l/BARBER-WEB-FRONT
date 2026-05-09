@@ -46,6 +46,12 @@ export class Login {
     this.authService.login(this.form).subscribe({
       next: () => {
         this.loading = false;
+
+        if (this.authService.isAdmin()) {
+          this.router.navigateByUrl('/admin');
+          return;
+        }
+
         this.router.navigateByUrl('/reservar');
       },
       error: () => {

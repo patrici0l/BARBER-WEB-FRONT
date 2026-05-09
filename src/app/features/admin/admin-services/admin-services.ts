@@ -31,7 +31,7 @@ export class AdminServices implements OnInit {
   changingStatusId: number | null = null;
 
   errorMessage = '';
-  successMessage = ''; // Se mantiene por compatibilidad, pero priorizamos Toast
+  successMessage = '';
 
   constructor(
     private readonly barberServiceService: BarberServiceService,
@@ -55,15 +55,7 @@ export class AdminServices implements OnInit {
       error: (error) => {
         console.error('ADMIN SERVICES ERROR:', error);
         this.loading = false;
-
-        if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'No tienes permisos para gestionar servicios.';
-          return;
-        }
-
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudieron cargar los servicios. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudieron cargar los servicios.');
       }
     });
   }
@@ -116,9 +108,7 @@ export class AdminServices implements OnInit {
       error: (error) => {
         console.error('CREATE SERVICE ERROR:', error);
         this.saving = false;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo crear el servicio. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo crear el servicio.');
       }
     });
   }
@@ -134,9 +124,7 @@ export class AdminServices implements OnInit {
       error: (error) => {
         console.error('UPDATE SERVICE ERROR:', error);
         this.saving = false;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo actualizar el servicio. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo actualizar el servicio.');
       }
     });
   }
@@ -175,9 +163,7 @@ export class AdminServices implements OnInit {
       error: (error) => {
         console.error('ACTIVATE SERVICE ERROR:', error);
         this.changingStatusId = null;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo activar el servicio. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo activar el servicio.');
       }
     });
   }
@@ -195,9 +181,7 @@ export class AdminServices implements OnInit {
       error: (error) => {
         console.error('DEACTIVATE SERVICE ERROR:', error);
         this.changingStatusId = null;
-        this.errorMessage =
-          error?.error?.message ||
-          `No se pudo desactivar el servicio. Status: ${error?.status}`;
+        this.handleError(error, 'No se pudo desactivar el servicio.');
       }
     });
   }
@@ -225,5 +209,22 @@ export class AdminServices implements OnInit {
       durationMinutes: 30,
       active: true
     };
+  }
+
+  /**
+   * Centraliza el manejo de errores HTTP para mostrar mensajes precisos
+   */
+  private handleError(error: any, defaultMessage: string): void {
+    if (error.status === 401) {
+      this.errorMessage = 'Tu sesión expiró o no se envió el token. Cierra sesión e inicia nuevamente.';
+      return;
+    }
+
+    if (error.status === 403) {
+      this.errorMessage = 'Tu usuario no tiene permisos de administrador para esta acción.';
+      return;
+    }
+
+    this.errorMessage = error?.error?.message || `${defaultMessage} Status: ${error?.status || 'Unknown'}`;
   }
 }
