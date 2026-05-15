@@ -226,10 +226,13 @@ export class AppointmentCreate implements OnInit {
   }
 
   private getToday(): string {
-    const today = new Date();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const now = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Guayaquil',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
 
-    return `${today.getFullYear()}-${month}-${day}`;
+    return now;
   }
 }

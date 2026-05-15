@@ -224,6 +224,10 @@ export class AdminProducts implements OnInit {
     return this.products.filter(p => p.active).length;
   }
 
+  get availableProducts(): number {
+    return this.products.filter(p => p.available).length;
+  }
+
   get inactiveProducts(): number {
     return this.products.filter(p => !p.active).length;
   }

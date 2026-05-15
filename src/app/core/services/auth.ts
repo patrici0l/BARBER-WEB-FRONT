@@ -41,7 +41,7 @@ export class AuthService {
       userId: response.userId,
       name: response.name,
       email: response.email,
-      role: this.normalizeRole(response.role) // Normalización aplicada aquí
+      role: this.normalizeRole(response.role)
     };
 
     localStorage.setItem(this.userKey, JSON.stringify(currentUser));
@@ -88,12 +88,10 @@ export class AuthService {
 
     const currentUser = this.getCurrentUser();
 
-    // Verificación por objeto en sesión (ya normalizado)
     if (currentUser?.role === 'ADMIN') {
       return true;
     }
 
-    // Verificación de respaldo por Token (por si el objeto no está en localstorage)
     const token = this.getToken();
     if (!token) {
       return false;
@@ -140,27 +138,33 @@ export class AuthService {
     return role as UserRole;
   }
 
+  /**
+   * Decodifica el payload del JWT manejando caracteres UTF-8.
+   * Referencia: image_8f5880.png
+   */
   private decodeToken(token: string): any | null {
     try {
-      const payload = token.split('.')[1];
+      const base64Url = token.split('.')[1];
 
-      if (!payload) {
+      if (!base64Url) {
         return null;
       }
 
-      const normalizedPayload = payload
+      const base64 = base64Url
         .replace(/-/g, '+')
-        .replace(/_/g, '/');
+        .replace(/_/g, '/')
+        .padEnd(Math.ceil(base64Url.length / 4) * 4, '=');
 
-      const decodedPayload = decodeURIComponent(
-        atob(normalizedPayload)
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
           .split('')
-          .map((char) => `%${(`00${char.charCodeAt(0).toString(16)}`).slice(-2)}`)
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
           .join('')
       );
 
-      return JSON.parse(decodedPayload);
-    } catch {
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('TOKEN DECODE ERROR:', error);
       return null;
     }
   }
@@ -172,7 +176,6 @@ export class AuthService {
       return false;
     }
 
-    // El exp de JWT está en segundos, Date.now() en milisegundos
     return Date.now() >= payload.exp * 1000;
   }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { AppointmentService } from '../../../core/services/appointment';
@@ -16,7 +15,6 @@ import { ToastService } from '../../../core/services/toast';
     NgFor,
     NgClass,
     DatePipe,
-    RouterLink,
     Alert,
     FormsModule
   ],
@@ -111,7 +109,24 @@ export class AdminDashboard implements OnInit {
   }
 
   completeAppointment(appointment: Appointment): void {
-    this.toastService.info('Funcionalidad de completar en desarrollo');
+    if (appointment.status !== 'BOOKED') return;
+    if (!confirm('¿Seguro que deseas marcar esta reserva como completada?')) return;
+
+    this.completingId = appointment.id;
+    this.errorMessage = '';
+
+    this.appointmentService.completeAppointment(appointment.id).subscribe({
+      next: () => {
+        this.completingId = null;
+        this.toastService.success('Reserva completada correctamente.');
+        this.loadAppointments();
+      },
+      error: (error) => {
+        console.error('COMPLETE APPOINTMENT ERROR:', error);
+        this.completingId = null;
+        this.handleError(error, 'Error al completar la reserva.');
+      }
+    });
   }
 
   // --- Lógica de Scroll y Filtro Rápido ---
@@ -125,17 +140,21 @@ export class AdminDashboard implements OnInit {
 
   // --- Lógica de Tiempos y Próximas Reservas ---
   get nowDate(): string {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${now.getFullYear()}-${month}-${day}`;
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Guayaquil',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
   }
 
   get nowTime(): string {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'America/Guayaquil',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(new Date());
   }
 
   get upcomingAppointments(): Appointment[] {
@@ -204,4 +223,5 @@ export class AdminDashboard implements OnInit {
     return labels[status] || status;
   }
   canCancel(a: Appointment): boolean { return a.status === 'BOOKED'; }
+  canComplete(a: Appointment): boolean { return a.status === 'BOOKED'; }
 }

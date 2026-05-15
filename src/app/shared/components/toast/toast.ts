@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core'; // Importa inject
-import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgFor } from '@angular/common';
 import { ToastMessage, ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, AsyncPipe],
+  imports: [NgFor, NgClass, AsyncPipe],
   templateUrl: './toast.html',
   styleUrl: './toast.scss'
 })

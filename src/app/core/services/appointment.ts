@@ -31,4 +31,8 @@ export class AppointmentService {
   cancelAppointment(id: number): Observable<Appointment> {
     return this.http.put<Appointment>(`${this.apiUrl}/${id}/cancel`, {});
   }
+
+  completeAppointment(id: number): Observable<Appointment> {
+    return this.http.put<Appointment>(`${this.adminAppointmentsUrl}/${id}/complete`, {});
+  }
 }

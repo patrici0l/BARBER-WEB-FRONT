@@ -51,7 +51,10 @@ function isTokenExpired(token: string): boolean {
     }
 
     // Normalización de Base64 para caracteres especiales
-    const normalizedPayload = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const normalizedPayload = payloadPart
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(Math.ceil(payloadPart.length / 4) * 4, '=');
 
     // Decodificación manejando caracteres Unicode (UTF-8)
     const decodedPayload = JSON.parse(
