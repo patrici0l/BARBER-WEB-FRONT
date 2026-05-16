@@ -13,11 +13,12 @@ export class AppointmentService {
   private readonly apiUrl = `${environment.apiUrl}/appointments`;
   private readonly myAppointmentsUrl = `${environment.apiUrl}/my-appointments`;
   private readonly adminAppointmentsUrl = `${environment.apiUrl}/admin/appointments`;
+  private readonly reservationsUrl = `${environment.apiUrl}/reservations`;
 
   constructor(private readonly http: HttpClient) { }
 
   createAppointment(request: AppointmentRequest): Observable<Appointment> {
-    return this.http.post<Appointment>(this.apiUrl, request);
+    return this.http.post<Appointment>(this.reservationsUrl, request);
   }
 
   getMyAppointments(): Observable<Appointment[]> {

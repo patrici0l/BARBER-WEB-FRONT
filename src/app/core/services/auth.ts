@@ -86,21 +86,21 @@ export class AuthService {
       return false;
     }
 
-    const currentUser = this.getCurrentUser();
+    const token = this.getToken();
+    const payload = token ? this.decodeToken(token) : null;
+    const roleFromToken = this.normalizeRole(payload?.role || '');
 
-    if (currentUser?.role === 'ADMIN') {
+    if (roleFromToken === 'ADMIN') {
       return true;
     }
 
-    const token = this.getToken();
-    if (!token) {
-      return false;
+    const currentUser = this.getCurrentUser();
+
+    if (currentUser?.role === 'ADMIN') {
+      this.logout();
     }
 
-    const payload = this.decodeToken(token);
-    const roleFromToken = payload?.role;
-
-    return roleFromToken === 'ADMIN' || roleFromToken === 'ROLE_ADMIN';
+    return false;
   }
 
   getUserEmail(): string | null {
@@ -132,6 +132,10 @@ export class AuthService {
     }
 
     if (role === 'ROLE_CLIENT') {
+      return 'CLIENT';
+    }
+
+    if (role !== 'ADMIN' && role !== 'CLIENT') {
       return 'CLIENT';
     }
 
