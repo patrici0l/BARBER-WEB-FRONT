@@ -27,11 +27,16 @@ export class Login {
 
   loading = false;
   errorMessage = '';
+  showPassword = false;
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
   ) { }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   submit(): void {
     this.errorMessage = '';

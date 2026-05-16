@@ -1,57 +1,109 @@
 <section class="auth-page">
-  <div class="auth-card">
-    <span class="auth-card__eyebrow">Acceso</span>
+  <div class="auth-shell">
+    <aside class="auth-showcase" aria-label="Experiencia Barberia">
+      <div class="auth-showcase__content">
+        <span class="auth-showcase__eyebrow">Barberia premium</span>
+        <h1 class="auth-showcase__title">Tu siguiente corte empieza con una experiencia digital impecable.</h1>
+        <p class="auth-showcase__copy">
+          Reserva, revisa horarios y entra a tu panel con una interfaz rapida, elegante y preparada para crecer.
+        </p>
+      </div>
 
-    <h1>Iniciar sesión</h1>
+      <div class="auth-orbit" aria-hidden="true">
+        <div class="auth-orbit__ring auth-orbit__ring--outer"></div>
+        <div class="auth-orbit__ring auth-orbit__ring--middle"></div>
+        <div class="auth-orbit__ring auth-orbit__ring--inner"></div>
+        <div class="auth-orbit__blade">
+          <span></span>
+        </div>
+        <div class="auth-orbit__card auth-orbit__card--top">
+          <small>Hoy</small>
+          <strong>20:00</strong>
+        </div>
+        <div class="auth-orbit__card auth-orbit__card--bottom">
+          <small>Panel</small>
+          <strong>Activo</strong>
+        </div>
+      </div>
 
-    <p>Ingresa con tu cuenta para reservar turnos y consultar tus reservas.</p>
+    </aside>
 
-    <!-- Uso del componente Alert para Errores de Login -->
-    <app-alert
-      *ngIf="errorMessage"
-      type="error"
-      [message]="errorMessage"
-      (closed)="errorMessage = ''"
-    ></app-alert>
+    <div class="auth-card">
+      <header class="auth-card__header">
+        <span class="auth-card__eyebrow">Acceso seguro</span>
+        <h2 class="auth-card__title">Iniciar sesi&oacute;n</h2>
+        <p class="auth-card__subtitle">
+          Ingresa para continuar con tus reservas, historial y panel administrativo.
+        </p>
+      </header>
 
-    <form class="auth-form" (ngSubmit)="submit()">
-      <label>
-        Email
-        <input
-          type="email"
-          name="email"
-          [(ngModel)]="form.email"
-          placeholder="cliente@email.com"
-          autocomplete="email"
-          required
-        />
-      </label>
+      <app-alert
+        *ngIf="errorMessage"
+        type="error"
+        [message]="errorMessage"
+        (closed)="errorMessage = ''"
+        class="auth-card__alert"
+      ></app-alert>
 
-      <label>
-        Contraseña
-        <input
-          type="password"
-          name="password"
-          [(ngModel)]="form.password"
-          placeholder="Tu contraseña"
-          autocomplete="current-password"
-          required
-        />
-      </label>
+      <form class="auth-form" (ngSubmit)="submit()" #loginForm="ngForm">
+        <div class="auth-form__group">
+          <label for="email" class="auth-form__label">Email</label>
+          <div class="auth-form__input-wrapper">
+            <span class="auth-form__icon" aria-hidden="true">@</span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="form.email"
+              placeholder="cliente@email.com"
+              autocomplete="email"
+              required
+              class="auth-form__input"
+            />
+          </div>
+        </div>
 
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
-      </button>
-    </form>
+        <div class="auth-form__group">
+          <label for="password" class="auth-form__label">Contrase&ntilde;a</label>
+          <div class="auth-form__input-wrapper">
+            <span class="auth-form__icon" aria-hidden="true">*</span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="form.password"
+              placeholder="Tu contrase&ntilde;a"
+              autocomplete="current-password"
+              required
+              class="auth-form__input auth-form__input--password"
+            />
+            <button
+              type="button"
+              class="auth-form__toggle"
+              [attr.aria-label]="showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+              (click)="togglePasswordVisibility()"
+            >
+              {{ showPassword ? 'Ocultar' : 'Ver' }}
+            </button>
+          </div>
+        </div>
 
-    <div class="auth-card__footer">
-      <span>¿No tienes cuenta?</span>
-      <a routerLink="/registro">Crear cuenta</a>
-    </div>
+        <button type="submit" class="auth-form__submit" [disabled]="loading || !loginForm.form.valid">
+          <span *ngIf="!loading" class="auth-form__submit-label">
+            Iniciar sesi&oacute;n
+            <span aria-hidden="true">-&gt;</span>
+          </span>
+          <span *ngIf="loading" class="auth-form__spinner-container">
+            <span class="auth-form__spinner"></span>
+            Ingresando...
+          </span>
+        </button>
+      </form>
 
-    <div class="auth-card__demo">
-      <strong>Admin de prueba:</strong>
-      <span>admin@barberia.com / admin123</span>
+      <footer class="auth-card__footer">
+        <span>&iquest;No tienes cuenta?</span>
+        <a routerLink="/registro" class="auth-card__link">Crear cuenta</a>
+      </footer>
     </div>
   </div>
 </section>
