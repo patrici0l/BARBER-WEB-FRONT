@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
+import { ThemeService } from '../../../core/services/theme';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,8 @@ export class Navbar {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    readonly themeService: ThemeService
   ) { }
 
   /**
@@ -41,5 +43,9 @@ export class Navbar {
   logout(): void {
     this.authService.logout();
     this.router.navigateByUrl('/');
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
   }
 }

@@ -1,6 +1,6 @@
-.admin-hours-page {
+﻿.admin-hours-page {
     padding: 64px 0;
-    background: #111111;
+    background: var(--bg);
 
     &__header {
         display: flex;
@@ -11,7 +11,7 @@
 
         >span {
             flex: 0 0 auto;
-            color: #d7a84f;
+            color: var(--accent);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.12em;
@@ -30,7 +30,7 @@
 
         p {
             margin: 14px 0 0;
-            color: #bbbbbb;
+            color: var(--muted);
             line-height: 1.7;
         }
     }
@@ -47,19 +47,19 @@
     padding: 22px;
     border-radius: 22px;
     background:
-        radial-gradient(circle at top right, rgba(215, 168, 79, 0.13), transparent 32%),
-        #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
+        var(--surface);
+    border: 1px solid var(--border);
 
     span {
         display: block;
         margin-bottom: 8px;
-        color: #aaaaaa;
+        color: var(--muted);
         font-weight: 700;
     }
 
     strong {
-        color: #ffffff;
+        color: var(--text);
         font-size: 2rem;
     }
 }
@@ -74,8 +74,8 @@
         padding: 0 18px;
         border: 0;
         border-radius: 999px;
-        background: #d7a84f;
-        color: #111111;
+        background: var(--accent);
+        color: var(--accent-contrast);
         font-weight: 900;
 
         &:disabled {
@@ -97,9 +97,9 @@
     padding: 26px;
     border-radius: 26px;
     background:
-        radial-gradient(circle at top right, rgba(215, 168, 79, 0.1), transparent 32%),
-        #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
+        var(--surface);
+    border: 1px solid var(--border);
 
     &__top {
         display: flex;
@@ -121,7 +121,7 @@
         label {
             display: grid;
             gap: 8px;
-            color: #dddddd;
+            color: var(--text);
             font-weight: 700;
         }
 
@@ -130,13 +130,13 @@
             min-height: 46px;
             padding: 0 14px;
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            background: #111111;
-            color: #ffffff;
+            border: 1px solid var(--border-strong);
+            background: var(--bg);
+            color: var(--text);
             outline: none;
 
             &:focus {
-                border-color: #d7a84f;
+                border-color: var(--accent);
             }
 
             &:disabled {
@@ -155,13 +155,13 @@
     font-weight: 900;
 
     &--active {
-        background: rgba(80, 255, 160, 0.1);
-        color: #a6ffd0;
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 
     &--inactive {
-        background: rgba(255, 80, 80, 0.12);
-        color: #ffb4b4;
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 }
 
@@ -181,31 +181,31 @@
 
 .toggle-button {
     &--active {
-        background: rgba(255, 80, 80, 0.14);
-        color: #ffb4b4;
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 
     &--inactive {
-        background: rgba(80, 255, 160, 0.1);
-        color: #a6ffd0;
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 }
 
 .save-button {
-    background: #d7a84f;
-    color: #111111;
+    background: var(--accent);
+    color: var(--accent-contrast);
 }
 
 .state-card,
 .message {
     padding: 22px;
     border-radius: 20px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
 }
 
 .state-card {
-    color: #dddddd;
+    color: var(--text);
 }
 
 .message {
@@ -214,15 +214,15 @@
     margin-bottom: 20px;
 
     &--error {
-        border-color: rgba(255, 80, 80, 0.25);
-        background: rgba(255, 80, 80, 0.08);
-        color: #ffb4b4;
+        border-color: var(--danger-border);
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 
     &--success {
-        border-color: rgba(80, 255, 160, 0.2);
-        background: rgba(80, 255, 160, 0.08);
-        color: #a6ffd0;
+        border-color: var(--success-border);
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 }
 

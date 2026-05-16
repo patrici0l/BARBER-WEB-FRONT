@@ -1,10 +1,10 @@
-// --- Variables & Mixins ---
-$gold: #d7a84f;
-$bg-dark: #111111;
-$card-bg: #1a1a1a;
-$text-muted: #aaaaaa;
-$white: #ffffff;
-$border-light: rgba(255, 255, 255, 0.08);
+﻿// --- Variables & Mixins ---
+$gold: var(--accent);
+$bg-dark: var(--bg);
+$card-bg: var(--surface);
+$text-muted: var(--muted);
+$white: var(--text);
+$border-light: var(--border);
 
 .admin-page {
     padding: 64px 0;
@@ -40,13 +40,13 @@ $border-light: rgba(255, 255, 255, 0.08);
 
         p {
             margin: 14px 0 0;
-            color: #bbbbbb;
+            color: var(--muted);
             line-height: 1.7;
         }
     }
 }
 
-// --- Grid de Estadísticas (6 columnas) ---
+// --- Grid de EstadÃ­sticas (6 columnas) ---
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr); // Actualizado a 6
@@ -58,7 +58,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     padding: 22px;
     border-radius: 22px;
     background:
-        radial-gradient(circle at top right, rgba($gold, 0.13), transparent 32%),
+        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
         $card-bg;
     border: 1px solid $border-light;
     transition: transform 0.2s ease;
@@ -82,7 +82,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     }
 }
 
-// --- Sección Agenda de Hoy ---
+// --- SecciÃ³n Agenda de Hoy ---
 .today-section {
     display: grid;
     gap: 18px;
@@ -90,7 +90,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     padding: 24px;
     border-radius: 28px;
     background:
-        radial-gradient(circle at top right, rgba($gold, 0.12), transparent 34%),
+        radial-gradient(circle at top right, var(--accent-soft), transparent 34%),
         $card-bg;
     border: 1px solid $border-light;
 
@@ -139,7 +139,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     border: 1px solid $border-light;
 
     &--booked {
-        border-color: rgba($gold, 0.25);
+        border-color: var(--accent-border);
     }
 
     &--cancelled {
@@ -147,7 +147,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     }
 
     &--completed {
-        border-color: rgba(80, 255, 160, 0.2);
+        border-color: var(--success-border);
     }
 
     &__time {
@@ -174,7 +174,7 @@ $border-light: rgba(255, 255, 255, 0.08);
 
         p {
             margin: 6px 0 0;
-            color: #dddddd;
+            color: var(--text);
             font-size: 0.95rem;
 
             small {
@@ -208,7 +208,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     label {
         display: grid;
         gap: 8px;
-        color: #dddddd;
+        color: var(--text);
         font-weight: 700;
         font-size: 0.9rem;
     }
@@ -218,7 +218,7 @@ $border-light: rgba(255, 255, 255, 0.08);
         min-height: 44px;
         padding: 0 14px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid var(--border-strong);
         background: $bg-dark;
         color: $white;
         outline: none;
@@ -252,7 +252,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     td {
         padding: 18px;
         text-align: left;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        border-bottom: 1px solid var(--border);
     }
 
     th {
@@ -263,7 +263,7 @@ $border-light: rgba(255, 255, 255, 0.08);
     }
 
     td {
-        color: #eeeeee;
+        color: var(--text);
     }
 }
 
@@ -291,18 +291,18 @@ $border-light: rgba(255, 255, 255, 0.08);
     text-transform: uppercase;
 
     &--booked {
-        background: rgba($gold, 0.12);
+        background: var(--accent-soft);
         color: $gold;
     }
 
     &--cancelled {
-        background: rgba(255, 80, 80, 0.12);
-        color: #ffb4b4;
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 
     &--completed {
-        background: rgba(80, 255, 160, 0.1);
-        color: #a6ffd0;
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 }
 
@@ -317,7 +317,7 @@ button {
         border: 0;
         border-radius: 999px;
         background: $gold;
-        color: #111111;
+        color: var(--accent-contrast);
         font-weight: 900;
 
         &:hover {
@@ -332,7 +332,7 @@ button {
 }
 
 .secondary-button {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--border);
     color: $white;
     border: 0;
     padding: 0 18px;
@@ -340,21 +340,21 @@ button {
     font-weight: 700;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--surface-muted);
     }
 }
 
 .cancel-button {
     padding: 8px 16px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 80, 80, 0.3);
+    border: 1px solid var(--danger-border);
     background: transparent;
-    color: #ffb4b4;
+    color: var(--danger-text);
     font-weight: 700;
     font-size: 0.85rem;
 
     &:hover {
-        background: rgba(255, 80, 80, 0.1);
+        background: var(--danger-soft);
     }
 }
 

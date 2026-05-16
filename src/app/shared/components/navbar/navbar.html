@@ -31,6 +31,20 @@
         <a routerLink="/admin/horarios" routerLinkActive="active"> Admin horarios </a>
       </ng-container>
 
+      <button
+        type="button"
+        class="navbar__theme"
+        [attr.aria-label]="themeService.mode() === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'"
+        (click)="toggleTheme()"
+      >
+        <span class="navbar__theme-track">
+          <span class="navbar__theme-thumb"></span>
+        </span>
+        <span class="navbar__theme-text">
+          {{ themeService.mode() === 'light' ? 'Claro' : 'Oscuro' }}
+        </span>
+      </button>
+
       <!-- Control de Acceso / Login -->
       <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active" class="navbar__login">
         Iniciar sesión

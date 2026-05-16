@@ -15,10 +15,10 @@
     gap: 12px;
     padding: 16px;
     border-radius: 18px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-    animation: toast-in 0.22s ease-out;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    animation: toast-in 0.22s var(--ease);
 
     &__icon {
         width: 28px;
@@ -31,7 +31,7 @@
 
     p {
         margin: 0;
-        color: #ffffff;
+        color: var(--text);
         line-height: 1.5;
         font-weight: 700;
     }
@@ -41,45 +41,45 @@
         height: 28px;
         border: 0;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--surface-muted);
         color: inherit;
         font-size: 1.2rem;
         line-height: 1;
     }
 
     &--success {
-        border-color: rgba(80, 255, 160, 0.25);
+        border-color: var(--success-border);
 
         .toast__icon {
-            background: rgba(80, 255, 160, 0.14);
-            color: #a6ffd0;
+            background: var(--success-soft);
+            color: var(--success-text);
         }
     }
 
     &--error {
-        border-color: rgba(255, 80, 80, 0.28);
+        border-color: var(--danger-border);
 
         .toast__icon {
-            background: rgba(255, 80, 80, 0.14);
-            color: #ffb4b4;
+            background: var(--danger-soft);
+            color: var(--danger-text);
         }
     }
 
     &--warning {
-        border-color: rgba(215, 168, 79, 0.28);
+        border-color: var(--accent-border);
 
         .toast__icon {
-            background: rgba(215, 168, 79, 0.16);
-            color: #d7a84f;
+            background: var(--accent-soft);
+            color: var(--accent);
         }
     }
 
     &--info {
-        border-color: rgba(120, 160, 255, 0.28);
+        border-color: var(--info-soft);
 
         .toast__icon {
-            background: rgba(120, 160, 255, 0.14);
-            color: #b7c8ff;
+            background: var(--info-soft);
+            color: var(--info);
         }
     }
 }

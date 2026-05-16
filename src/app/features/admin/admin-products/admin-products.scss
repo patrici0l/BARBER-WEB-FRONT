@@ -1,6 +1,6 @@
-.admin-products-page {
+﻿.admin-products-page {
     padding: 64px 0;
-    background: #111111;
+    background: var(--bg);
 
     &__header {
         display: flex;
@@ -11,7 +11,7 @@
 
         >span {
             flex: 0 0 auto;
-            color: #d7a84f;
+            color: var(--accent);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.12em;
@@ -30,7 +30,7 @@
 
         p {
             margin: 14px 0 0;
-            color: #bbbbbb;
+            color: var(--muted);
             line-height: 1.7;
         }
     }
@@ -47,19 +47,19 @@
     padding: 22px;
     border-radius: 22px;
     background:
-        radial-gradient(circle at top right, rgba(215, 168, 79, 0.13), transparent 32%),
-        #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
+        var(--surface);
+    border: 1px solid var(--border);
 
     span {
         display: block;
         margin-bottom: 8px;
-        color: #aaaaaa;
+        color: var(--muted);
         font-weight: 700;
     }
 
     strong {
-        color: #ffffff;
+        color: var(--text);
         font-size: 2rem;
     }
 }
@@ -75,8 +75,8 @@
 .products-panel {
     padding: 26px;
     border-radius: 28px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
 }
 
 .product-form {
@@ -90,7 +90,7 @@
     label {
         display: grid;
         gap: 8px;
-        color: #dddddd;
+        color: var(--text);
         font-weight: 700;
     }
 
@@ -99,13 +99,13 @@
         width: 100%;
         padding: 13px 14px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        background: #111111;
-        color: #ffffff;
+        border: 1px solid var(--border-strong);
+        background: var(--bg);
+        color: var(--text);
         outline: none;
 
         &:focus {
-            border-color: #d7a84f;
+            border-color: var(--accent);
         }
     }
 
@@ -138,8 +138,8 @@
         min-height: 46px;
         border: 0;
         border-radius: 999px;
-        background: #d7a84f;
-        color: #111111;
+        background: var(--accent);
+        color: var(--accent-contrast);
         font-weight: 900;
 
         &:disabled {
@@ -150,8 +150,8 @@
 }
 
 .secondary-button {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #ffffff !important;
+    background: var(--border) !important;
+    color: var(--text) !important;
 }
 
 .products-panel {
@@ -171,8 +171,8 @@
             padding: 0 16px;
             border: 0;
             border-radius: 999px;
-            background: #d7a84f;
-            color: #111111;
+            background: var(--accent);
+            color: var(--accent-contrast);
             font-weight: 900;
 
             &:disabled {
@@ -193,12 +193,12 @@
     grid-template-columns: 160px 1fr;
     overflow: hidden;
     border-radius: 22px;
-    background: #111111;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg);
+    border: 1px solid var(--border);
 
     &__image {
         min-height: 180px;
-        background: #252525;
+        background: var(--surface-muted);
 
         img {
             width: 100%;
@@ -214,7 +214,7 @@
         min-height: 180px;
         display: grid;
         place-items: center;
-        color: #777777;
+        color: var(--muted-2);
         font-weight: 800;
     }
 
@@ -238,7 +238,7 @@
 
     p {
         margin: 10px 0 0;
-        color: #bbbbbb;
+        color: var(--muted);
         line-height: 1.5;
     }
 
@@ -248,12 +248,12 @@
         text-align: right;
 
         strong {
-            color: #ffffff;
+            color: var(--text);
             font-size: 1.2rem;
         }
 
         span {
-            color: #aaaaaa;
+            color: var(--muted);
             font-weight: 700;
         }
     }
@@ -293,47 +293,47 @@
 
     &--active,
     &--available {
-        background: rgba(80, 255, 160, 0.1);
-        color: #a6ffd0;
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 
     &--inactive,
     &--unavailable {
-        background: rgba(255, 80, 80, 0.12);
-        color: #ffb4b4;
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 }
 
 .edit-button {
-    background: rgba(215, 168, 79, 0.12);
-    color: #d7a84f;
+    background: var(--accent-soft);
+    color: var(--accent);
 }
 
 .stock-button {
-    background: rgba(120, 160, 255, 0.14);
-    color: #b7c8ff;
+    background: var(--info-soft);
+    color: var(--info);
 }
 
 .deactivate-button {
-    background: rgba(255, 80, 80, 0.14);
-    color: #ffb4b4;
+    background: var(--danger-soft);
+    color: var(--danger-text);
 }
 
 .activate-button {
-    background: rgba(80, 255, 160, 0.1);
-    color: #a6ffd0;
+    background: var(--success-soft);
+    color: var(--success-text);
 }
 
 .state-card,
 .message {
     padding: 22px;
     border-radius: 20px;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
 }
 
 .state-card {
-    color: #dddddd;
+    color: var(--text);
 }
 
 .message {
@@ -342,15 +342,15 @@
     margin-bottom: 20px;
 
     &--error {
-        border-color: rgba(255, 80, 80, 0.25);
-        background: rgba(255, 80, 80, 0.08);
-        color: #ffb4b4;
+        border-color: var(--danger-border);
+        background: var(--danger-soft);
+        color: var(--danger-text);
     }
 
     &--success {
-        border-color: rgba(80, 255, 160, 0.2);
-        background: rgba(80, 255, 160, 0.08);
-        color: #a6ffd0;
+        border-color: var(--success-border);
+        background: var(--success-soft);
+        color: var(--success-text);
     }
 }
 
