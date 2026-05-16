@@ -1,0 +1,165 @@
+<section class="admin-notifications-page">
+  <div class="container">
+    <div class="admin-notifications-page__header">
+      <span>Panel administrativo</span>
+      <div>
+        <h1>Notificaciones</h1>
+        <p>Configura recordatorios automaticos por correo y WhatsApp, envia avisos manuales y revisa el historial.</p>
+      </div>
+    </div>
+
+    <app-alert
+      *ngIf="errorMessage"
+      type="error"
+      [message]="errorMessage"
+      (closed)="errorMessage = ''"
+    ></app-alert>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <span>Anticipacion</span>
+        <strong>{{ minutesPreview }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Automaticas</span>
+        <strong>{{ settings.automaticEnabled ? 'Activas' : 'Pausadas' }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Historial</span>
+        <strong>{{ history.length }}</strong>
+      </article>
+    </div>
+
+    <div class="notifications-layout">
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <span>Reglas automaticas</span>
+          <h2>Recordatorio antes de la cita</h2>
+        </div>
+
+        <div class="settings-grid">
+          <label>
+            Minutos antes
+            <input type="number" min="5" max="10080" step="5" [(ngModel)]="settings.reminderMinutesBefore" />
+          </label>
+
+          <label>
+            Numero WhatsApp negocio
+            <input type="text" placeholder="+593..." [(ngModel)]="settings.whatsappBusinessNumber" />
+          </label>
+        </div>
+
+        <div class="switches">
+          <label class="switch-row">
+            <input type="checkbox" [(ngModel)]="settings.automaticEnabled" />
+            <span>Notificaciones automaticas</span>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" [(ngModel)]="settings.emailEnabled" />
+            <span>Correo electronico</span>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" [(ngModel)]="settings.whatsappEnabled" />
+            <span>WhatsApp</span>
+          </label>
+        </div>
+
+        <button type="button" class="primary-button" [disabled]="saving" (click)="saveSettings()">
+          {{ saving ? 'Guardando...' : 'Guardar configuracion' }}
+        </button>
+      </article>
+
+      <article class="panel-card">
+        <div class="panel-card__header">
+          <span>Envio manual</span>
+          <h2>Avisar cuando sea necesario</h2>
+        </div>
+
+        <label>
+          Reserva
+          <select [(ngModel)]="manual.appointmentId">
+            <option [ngValue]="0">Selecciona una reserva</option>
+            <option *ngFor="let appointment of appointments" [ngValue]="appointment.id">
+              #{{ appointment.id }} - {{ appointment.userName }} - {{ appointment.appointmentDate }} {{ appointment.startTime }}
+            </option>
+          </select>
+        </label>
+
+        <div class="appointment-preview" *ngIf="selectedAppointment">
+          <strong>{{ selectedAppointment.serviceName }}</strong>
+          <span>{{ selectedAppointment.userName }} - {{ selectedAppointment.userEmail }}</span>
+        </div>
+
+        <div class="switches switches--inline">
+          <label class="switch-row">
+            <input type="checkbox" [(ngModel)]="manual.email" />
+            <span>Email</span>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" [(ngModel)]="manual.whatsapp" />
+            <span>WhatsApp</span>
+          </label>
+        </div>
+
+        <div class="settings-grid">
+          <label>
+            Email alternativo
+            <input type="email" placeholder="opcional" [(ngModel)]="manual.customEmail" />
+          </label>
+          <label>
+            WhatsApp alternativo
+            <input type="text" placeholder="opcional" [(ngModel)]="manual.customWhatsapp" />
+          </label>
+        </div>
+
+        <label>
+          Mensaje personalizado
+          <textarea rows="4" placeholder="Opcional. Si lo dejas vacio se envia el recordatorio normal." [(ngModel)]="manual.message"></textarea>
+        </label>
+
+        <button type="button" class="primary-button" [disabled]="sending" (click)="sendManual()">
+          {{ sending ? 'Enviando...' : 'Enviar notificacion manual' }}
+        </button>
+      </article>
+    </div>
+
+    <article class="history-card">
+      <div class="panel-card__header">
+        <span>Auditoria</span>
+        <h2>Historial de notificaciones</h2>
+      </div>
+
+      <div *ngIf="loading" class="state-card">Cargando notificaciones...</div>
+      <div *ngIf="!loading && history.length === 0" class="state-card">Aun no hay notificaciones registradas.</div>
+
+      <div class="history-table" *ngIf="!loading && history.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Canal</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Cliente</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of history">
+              <td>{{ item.createdAt | date:'short' }}</td>
+              <td>{{ item.channel }}</td>
+              <td>{{ item.triggerType === 'AUTOMATIC' ? 'Automatica' : 'Manual' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-badge--' + item.status.toLowerCase()">
+                  {{ getStatusLabel(item.status) }}
+                </span>
+              </td>
+              <td>{{ item.clientName || 'Sin cliente' }}</td>
+              <td>{{ item.detail || item.recipient || 'Sin detalle' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>

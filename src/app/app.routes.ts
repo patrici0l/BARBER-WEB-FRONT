@@ -11,6 +11,7 @@ import { AdminDashboard } from './features/admin/admin-dashboard/admin-dashboard
 import { AdminServices } from './features/admin/admin-services/admin-services';
 import { AdminProducts } from './features/admin/admin-products/admin-products';
 import { AdminBusinessHours } from './features/admin/admin-business-hours/admin-business-hours';
+import { AdminNotifications } from './features/admin/admin-notifications/admin-notifications';
 
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
@@ -63,6 +64,11 @@ export const routes: Routes = [
     {
         path: 'admin/horarios',
         component: AdminBusinessHours,
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'admin/notificaciones',
+        component: AdminNotifications,
         canActivate: [adminGuard]
     },
     {
