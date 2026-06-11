@@ -59,7 +59,7 @@
           type="button"
           (click)="loadAppointments()"
           [disabled]="loading"
-          class="secondary-button"
+          class="btn-3d btn-3d--secondary btn-3d--sm"
         >
           {{ loading ? 'Actualizando...' : 'Actualizar agenda' }}
         </button>
@@ -111,7 +111,7 @@
           <h2>Próximas reservas</h2>
           <p>Las siguientes 5 reservas activas desde este momento.</p>
         </div>
-        <button type="button" class="secondary-button" (click)="showBookedInTable()">
+        <button type="button" class="btn-3d btn-3d--secondary btn-3d--sm" (click)="showBookedInTable()">
           Ver reservadas
         </button>
       </div>
@@ -138,7 +138,7 @@
           <div class="upcoming-card__actions">
             <button
               type="button"
-              class="complete-button"
+              class="btn-3d btn-3d--success btn-3d--sm"
               [disabled]="completingId === appointment.id"
               (click)="completeAppointment(appointment)"
             >
@@ -146,7 +146,7 @@
             </button>
             <button
               type="button"
-              class="cancel-button"
+              class="btn-3d btn-3d--danger btn-3d--sm"
               [disabled]="cancellingId === appointment.id"
               (click)="cancelAppointment(appointment)"
             >
@@ -179,12 +179,12 @@
         /></label>
       </div>
       <div class="filters-actions">
-        <button type="button" (click)="loadAppointments()" [disabled]="loading">
+        <button type="button" class="btn-3d btn-3d--primary btn-3d--sm" (click)="loadAppointments()" [disabled]="loading">
           Actualizar reservas
         </button>
         <button
           type="button"
-          class="secondary-button"
+          class="btn-3d btn-3d--secondary btn-3d--sm"
           [disabled]="!hasActiveFilters"
           (click)="clearFilters()"
         >
@@ -235,7 +235,7 @@
               <button
                 *ngIf="canCancel(appointment)"
                 type="button"
-                class="cancel-button"
+                class="btn-3d btn-3d--danger btn-3d--sm"
                 [disabled]="cancellingId === appointment.id"
                 (click)="cancelAppointment(appointment)"
               >

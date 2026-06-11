@@ -22,6 +22,11 @@
 
     <div *ngIf="!loading && !errorMessage && services.length > 0" class="services-grid">
       <article class="service-card" *ngFor="let service of services">
+        <div class="service-card__media">
+          <img *ngIf="service.imageUrl" [src]="service.imageUrl" [alt]="service.name" />
+          <span *ngIf="!service.imageUrl">{{ service.name.charAt(0) }}</span>
+        </div>
+
         <div>
           <span class="service-card__duration">
             {{ service.durationMinutes }} min
@@ -34,7 +39,7 @@
 
         <div class="service-card__footer">
           <strong>{{ service.price | currency:'USD':'symbol':'1.2-2' }}</strong>
-          <a routerLink="/reservar">Reservar</a>
+          <a [routerLink]="['/reservar']" [queryParams]="{ serviceId: service.id }" class="btn-3d btn-3d--primary btn-3d--sm">Reservar</a>
         </div>
       </article>
     </div>

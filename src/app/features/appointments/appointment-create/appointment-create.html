@@ -41,8 +41,8 @@
         </p>
 
         <div class="confirmation-card__actions">
-          <a routerLink="/mis-reservas">Ver mis reservas</a>
-          <button type="button" (click)="clearMessages()">Cerrar mensaje</button>
+          <a routerLink="/mis-reservas" class="btn-3d btn-3d--primary btn-3d--sm">Ver mis reservas</a>
+          <button type="button" class="btn-3d btn-3d--secondary btn-3d--sm" (click)="clearMessages()">Cerrar mensaje</button>
         </div>
       </div>
     </div>
@@ -106,7 +106,16 @@
           />
         </label>
 
+        <div *ngIf="isSelectedDateClosed" class="closed-day-card">
+          <span>Día cerrado</span>
+          <strong>{{ selectedDayLabel | titlecase }}</strong>
+          <p>La barbería no acepta reservas este día. Cambia la fecha para ver horarios.</p>
+        </div>
+
         <div *ngIf="selectedService" class="selected-service">
+          <div class="selected-service__image" *ngIf="selectedService.imageUrl">
+            <img [src]="selectedService.imageUrl" [alt]="selectedService.name" />
+          </div>
           <h3>{{ selectedService.name }}</h3>
           <p>{{ selectedService.description }}</p>
           <strong>{{ selectedService.price | currency: 'USD' : 'symbol' : '1.2-2' }}</strong>
@@ -119,8 +128,9 @@
 
         <button
           type="submit"
-          class="submit-button"
+          class="btn-3d btn-3d--primary"
           [disabled]="creatingAppointment || !selectedStartTime"
+          style="width: 100%; margin-top: 14px;"
         >
           {{ creatingAppointment ? 'Reservando...' : 'Confirmar reserva' }}
         </button>
@@ -136,10 +146,14 @@
         <div *ngIf="loadingAvailability" class="state-card">Consultando horarios...</div>
 
         <div
-          *ngIf="!loadingAvailability && selectedServiceId && slots.length === 0"
+          *ngIf="!loadingAvailability && selectedServiceId && slots.length === 0 && !isSelectedDateClosed"
           class="state-card"
         >
           No hay horarios disponibles para esta fecha.
+        </div>
+
+        <div *ngIf="!loadingAvailability && selectedServiceId && isSelectedDateClosed" class="state-card">
+          No se muestran horarios porque {{ selectedDayLabel }} está cerrado.
         </div>
 
         <div *ngIf="!loadingAvailability && !selectedServiceId" class="state-card">

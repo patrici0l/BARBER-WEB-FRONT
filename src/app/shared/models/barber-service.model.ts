@@ -4,6 +4,7 @@ export interface BarberService {
     description: string;
     price: number;
     durationMinutes: number;
+    imageUrl: string | null;
     active: boolean;
 }
 
@@ -12,5 +13,6 @@ export interface BarberServiceRequest {
     description: string;
     price: number;
     durationMinutes: number;
+    imageUrl?: string | null;
     active?: boolean;
 }

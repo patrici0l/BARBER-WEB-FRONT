@@ -22,10 +22,7 @@
     place-items: center;
     overflow: hidden;
     padding: 52px 16px;
-    background:
-        radial-gradient(circle at 12% 8%, var(--accent-glow), transparent 26rem),
-        radial-gradient(circle at 88% 12%, var(--info-soft), transparent 24rem),
-        linear-gradient(135deg, var(--bg), var(--bg-soft));
+    background: var(--bg);
     isolation: isolate;
 }
 
@@ -36,10 +33,9 @@
     grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.72fr);
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 34px;
-    background: color-mix(in srgb, var(--surface) 78%, transparent);
+    border-radius: 28px;
+    background: var(--surface);
     box-shadow: var(--shadow-md);
-    backdrop-filter: blur(24px);
     animation: rise-in 560ms var(--ease) both;
 }
 
@@ -50,9 +46,7 @@
     align-content: space-between;
     overflow: hidden;
     padding: clamp(28px, 5vw, 56px);
-    background:
-        linear-gradient(130deg, color-mix(in srgb, var(--text) 92%, transparent), color-mix(in srgb, var(--text) 74%, transparent)),
-        radial-gradient(circle at 78% 22%, var(--accent-glow), transparent 22rem);
+    background: #16161a; /* elegant solid carbon obsidian */
     color: #ffffff;
     perspective: 1100px;
 
@@ -61,22 +55,11 @@
         position: absolute;
         inset: 0;
         background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-        background-size: 54px 54px;
-        mask-image: linear-gradient(140deg, rgba(0, 0, 0, 0.75), transparent 68%);
-        opacity: 0.5;
-    }
-
-    &::after {
-        content: "";
-        position: absolute;
-        inset: auto -20% -45% 6%;
-        height: 58%;
-        border-radius: 50%;
-        background: radial-gradient(circle, var(--accent-glow), transparent 68%);
-        filter: blur(8px);
-        transform: rotate(-9deg);
+            repeating-linear-gradient(90deg, transparent 0 54px, rgba(255, 255, 255, 0.04) 54px 55px),
+            repeating-linear-gradient(0deg, transparent 0 54px, rgba(255, 255, 255, 0.03) 54px 55px);
+        opacity: 0.35;
+        mask-image: linear-gradient(140deg, rgba(0, 0, 0, 0.8), transparent 70%);
+        pointer-events: none;
     }
 
     &__content {
@@ -149,11 +132,9 @@
         inset: 29% 34%;
         display: grid;
         place-items: center;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--accent-strong);
         border-radius: 26px;
-        background:
-            linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
-            linear-gradient(135deg, var(--accent), var(--accent-strong));
+        background: var(--accent);
         box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
         transform: translateZ(70px) rotate(-10deg);
 
@@ -211,8 +192,7 @@
     display: grid;
     align-content: center;
     padding: clamp(28px, 4vw, 48px);
-    background:
-        linear-gradient(180deg, color-mix(in srgb, var(--surface) 94%, transparent), var(--surface-raised));
+    background: var(--surface);
 
     &__header,
     .auth-form,
@@ -362,49 +342,6 @@
         }
     }
 
-    &__submit {
-        position: relative;
-        overflow: hidden;
-        min-height: 54px;
-        margin-top: 10px;
-        border: 0;
-        border-radius: 999px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-        color: var(--accent-contrast);
-        font-size: 1rem;
-        font-weight: 950;
-        box-shadow: var(--shadow-button);
-        transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), opacity 160ms var(--ease);
-
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
-            transform: translateX(-120%);
-            transition: transform 420ms var(--ease);
-        }
-
-        &:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-button-hover);
-
-            &::before {
-                transform: translateX(120%);
-            }
-        }
-
-        &:active:not(:disabled) {
-            transform: translateY(1px);
-        }
-
-        &:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-    }
-
     &__submit-label,
     &__spinner-container {
         position: relative;
@@ -413,13 +350,14 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
+        color: var(--accent-contrast);
     }
 
     &__spinner {
         width: 18px;
         height: 18px;
-        border: 2px solid color-mix(in srgb, currentColor 28%, transparent);
-        border-top-color: currentColor;
+        border: 2px solid color-mix(in srgb, var(--accent-contrast) 28%, transparent);
+        border-top-color: var(--accent-contrast);
         border-radius: 50%;
         animation: spin 650ms linear infinite;
     }

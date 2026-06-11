@@ -1,9 +1,7 @@
 .products-page {
     min-height: calc(100vh - 80px);
     padding: 64px 0;
-    background:
-        radial-gradient(circle at 10% 0%, var(--accent-soft), transparent 30%),
-        var(--bg);
+    background: var(--bg);
 
     &__header {
         max-width: 720px;
@@ -56,6 +54,7 @@
 }
 
 .product-card {
+    position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -65,15 +64,14 @@
     transition: transform 220ms var(--ease), box-shadow 220ms var(--ease), border-color 220ms var(--ease);
 
     &:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-border);
-        box-shadow: var(--shadow-md);
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent), var(--shadow-md);
     }
 
     &__image {
         height: 220px;
-        background:
-            linear-gradient(135deg, var(--surface-muted), var(--bg-soft));
+        background: var(--surface-muted);
 
         img {
             width: 100%;
@@ -94,6 +92,7 @@
         place-items: center;
         color: var(--muted-2);
         font-weight: 800;
+        background: var(--surface-muted);
     }
 
     &__body {
@@ -115,16 +114,20 @@
 
     &__badge {
         flex: 0 0 auto;
-        padding: 6px 10px;
+        padding: 5px 11px;
         border-radius: 999px;
-        background: var(--accent-soft);
-        color: var(--accent);
-        font-size: 0.78rem;
+        background: var(--success-soft);
+        color: var(--success-text);
+        border: 1px solid var(--success-border);
+        font-size: 0.74rem;
         font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
 
         &--empty {
             background: var(--danger-soft);
             color: var(--danger-text);
+            border-color: var(--danger-border);
         }
     }
 
@@ -143,8 +146,9 @@
         margin-top: 20px;
 
         strong {
-            color: var(--text);
-            font-size: 1.2rem;
+            color: var(--accent);
+            font-size: 1.25rem;
+            font-weight: 950;
         }
 
         span {

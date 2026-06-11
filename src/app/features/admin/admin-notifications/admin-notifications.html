@@ -64,7 +64,7 @@
           </label>
         </div>
 
-        <button type="button" class="primary-button" [disabled]="saving" (click)="saveSettings()">
+        <button type="button" class="btn-3d btn-3d--primary" [disabled]="saving" (click)="saveSettings()" style="width: 100%; min-height: 48px;">
           {{ saving ? 'Guardando...' : 'Guardar configuracion' }}
         </button>
       </article>
@@ -117,7 +117,7 @@
           <textarea rows="4" placeholder="Opcional. Si lo dejas vacio se envia el recordatorio normal." [(ngModel)]="manual.message"></textarea>
         </label>
 
-        <button type="button" class="primary-button" [disabled]="sending" (click)="sendManual()">
+        <button type="button" class="btn-3d btn-3d--primary" [disabled]="sending" (click)="sendManual()" style="width: 100%; min-height: 48px;">
           {{ sending ? 'Enviando...' : 'Enviar notificacion manual' }}
         </button>
       </article>

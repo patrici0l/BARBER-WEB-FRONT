@@ -68,6 +68,16 @@
           ></textarea>
         </label>
 
+        <label>
+          Imagen del servicio
+          <input
+            type="url"
+            name="imageUrl"
+            [(ngModel)]="form.imageUrl"
+            placeholder="https://..."
+          />
+        </label>
+
         <div class="form-grid">
           <label>
             Precio
@@ -129,6 +139,11 @@
         <div *ngIf="!loading && services.length > 0" class="services-list">
           <article class="service-card" *ngFor="let service of services">
             <div class="service-card__main">
+              <div class="service-card__image">
+                <img *ngIf="service.imageUrl" [src]="service.imageUrl" [alt]="service.name" />
+                <span *ngIf="!service.imageUrl">Sin imagen</span>
+              </div>
+
               <div>
                 <span
                   class="status-badge"

@@ -1,4 +1,4 @@
-﻿.admin-hours-page {
+.admin-hours-page {
     padding: 64px 0;
     background: var(--bg);
 
@@ -46,9 +46,7 @@
 .stat-card {
     padding: 22px;
     border-radius: 22px;
-    background:
-        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
-        var(--surface);
+    background: var(--surface);
     border: 1px solid var(--border);
 
     span {
@@ -96,9 +94,7 @@
     gap: 22px;
     padding: 26px;
     border-radius: 26px;
-    background:
-        radial-gradient(circle at top right, var(--accent-soft), transparent 32%),
-        var(--surface);
+    background: var(--surface);
     border: 1px solid var(--border);
 
     &__top {

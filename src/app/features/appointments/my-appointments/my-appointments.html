@@ -32,7 +32,7 @@
     <div *ngIf="!loading && !errorMessage && appointments.length === 0" class="empty-card">
       <h2>No tienes reservas todavía</h2>
       <p>Cuando reserves un turno, aparecerá en esta sección.</p>
-      <a routerLink="/reservar">Reservar ahora</a>
+      <a routerLink="/reservar" class="btn-3d btn-3d--primary btn-3d--sm" style="width: fit-content; margin-top: 8px;">Reservar ahora</a>
     </div>
 
     <!-- Listado de Reservas -->
@@ -75,9 +75,10 @@
         <button
           *ngIf="canCancel(appointment)"
           type="button"
-          class="cancel-button"
+          class="btn-3d btn-3d--danger btn-3d--sm"
           [disabled]="cancellingId === appointment.id"
           (click)="cancelAppointment(appointment)"
+          style="width: 100%; margin-top: 14px;"
         >
           {{ cancellingId === appointment.id ? 'Cancelando...' : 'Cancelar reserva' }}
         </button>

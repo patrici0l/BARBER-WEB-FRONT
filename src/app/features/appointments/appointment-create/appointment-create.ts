@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CurrencyPipe, DatePipe, NgFor, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { BarberServiceService } from '../../../core/services/barber-service';
 import { AvailabilityService } from '../../../core/services/availability';
 import { AppointmentService } from '../../../core/services/appointment';
+import { BusinessHourService } from '../../../core/services/business-hour';
 import { Alert } from '../../../shared/components/alert/alert';
 import { BarberService } from '../../../shared/models/barber-service.model';
 import { AvailabilitySlot } from '../../../shared/models/availability-slot.model';
 import { Appointment, AppointmentRequest } from '../../../shared/models/appointment.model';
+import { BusinessHour, DayOfWeek } from '../../../shared/models/business-hour.model';
 
 @Component({
   selector: 'app-appointment-create',
@@ -21,6 +23,7 @@ import { Appointment, AppointmentRequest } from '../../../shared/models/appointm
     RouterLink,
     DatePipe,
     CurrencyPipe,
+    TitleCasePipe,
     Alert
   ],
   templateUrl: './appointment-create.html',
@@ -29,6 +32,7 @@ import { Appointment, AppointmentRequest } from '../../../shared/models/appointm
 export class AppointmentCreate implements OnInit {
 
   services: BarberService[] = [];
+  businessHours: BusinessHour[] = [];
   slots: AvailabilitySlot[] = [];
 
   selectedServiceId: number | null = null;
@@ -47,12 +51,34 @@ export class AppointmentCreate implements OnInit {
   constructor(
     private readonly barberServiceService: BarberServiceService,
     private readonly availabilityService: AvailabilityService,
-    private readonly appointmentService: AppointmentService
+    private readonly appointmentService: AppointmentService,
+    private readonly businessHourService: BusinessHourService,
+    private readonly route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.selectedDate = this.getToday();
+    this.loadBusinessHours();
     this.loadServices();
+
+    // Pre-selecciona el servicio desde queryParams si existe
+    this.route.queryParams.subscribe(params => {
+      if (params['serviceId']) {
+        this.selectedServiceId = Number(params['serviceId']);
+        this.loadAvailability();
+      }
+    });
+  }
+
+  loadBusinessHours(): void {
+    this.businessHourService.getBusinessHours().subscribe({
+      next: (businessHours) => {
+        this.businessHours = businessHours;
+      },
+      error: (error) => {
+        console.error('LOAD BUSINESS HOURS ERROR:', error);
+      }
+    });
   }
 
   loadServices(): void {
@@ -89,7 +115,27 @@ export class AppointmentCreate implements OnInit {
 
     this.loadingAvailability = true;
 
-    this.availabilityService.getAvailability(this.selectedDate, this.selectedServiceId).subscribe({
+    this.businessHourService.getBusinessHours().subscribe({
+      next: (businessHours) => {
+        this.businessHours = businessHours;
+        this.loadAvailabilityWithCurrentBusinessHours();
+      },
+      error: (error) => {
+        console.error('REFRESH BUSINESS HOURS ERROR:', error);
+        this.loadingAvailability = false;
+        this.errorMessage = 'No se pudieron validar los días de atención.';
+      }
+    });
+  }
+
+  private loadAvailabilityWithCurrentBusinessHours(): void {
+    if (this.isSelectedDateClosed) {
+      this.loadingAvailability = false;
+      this.errorMessage = `La barbería está cerrada el ${this.selectedDayLabel}. Elige otra fecha.`;
+      return;
+    }
+
+    this.availabilityService.getAvailability(this.selectedDate, Number(this.selectedServiceId)).subscribe({
       next: (slots) => {
         this.slots = slots;
         this.loadingAvailability = false;
@@ -143,6 +189,13 @@ export class AppointmentCreate implements OnInit {
 
     if (!this.selectedServiceId || !this.selectedDate || !this.selectedStartTime) {
       this.errorMessage = 'Selecciona servicio, fecha y horario.';
+      return;
+    }
+
+    if (this.isSelectedDateClosed) {
+      this.errorMessage = `La barbería está cerrada el ${this.selectedDayLabel}. Elige otra fecha.`;
+      this.selectedStartTime = '';
+      this.slots = [];
       return;
     }
 
@@ -204,6 +257,39 @@ export class AppointmentCreate implements OnInit {
       return undefined;
     }
     return this.services.find(service => service.id === Number(this.selectedServiceId));
+  }
+
+  get selectedBusinessHour(): BusinessHour | undefined {
+    return this.businessHours.find(hour => hour.dayOfWeek === this.selectedDayOfWeek);
+  }
+
+  get isSelectedDateClosed(): boolean {
+    const businessHour = this.selectedBusinessHour;
+    return !!this.selectedDate && !!businessHour && (!businessHour.active || !businessHour.openTime || !businessHour.closeTime);
+  }
+
+  get selectedDayLabel(): string {
+    const labels: Record<DayOfWeek, string> = {
+      MONDAY: 'lunes',
+      TUESDAY: 'martes',
+      WEDNESDAY: 'miércoles',
+      THURSDAY: 'jueves',
+      FRIDAY: 'viernes',
+      SATURDAY: 'sábado',
+      SUNDAY: 'domingo'
+    };
+    return labels[this.selectedDayOfWeek] || 'día seleccionado';
+  }
+
+  get selectedDayOfWeek(): DayOfWeek {
+    if (!this.selectedDate) {
+      return 'MONDAY';
+    }
+
+    const [year, month, day] = this.selectedDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const days: DayOfWeek[] = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    return days[date.getDay()];
   }
 
   getConfirmationServiceName(): string {

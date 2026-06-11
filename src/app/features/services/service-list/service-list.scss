@@ -1,9 +1,7 @@
 .services-page {
     min-height: calc(100vh - 80px);
     padding: 64px 0;
-    background:
-        radial-gradient(circle at 85% 0%, var(--accent-soft), transparent 30%),
-        var(--bg);
+    background: var(--bg);
 
     &__header {
         max-width: 720px;
@@ -46,20 +44,52 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 26px;
+    overflow: hidden;
+    padding: 0;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    background:
-        radial-gradient(circle at top right, var(--accent-soft), transparent 34%),
-        linear-gradient(145deg, var(--surface), var(--surface-raised));
+    background: var(--surface);
     box-shadow: var(--shadow-sm);
     animation: rise-in 580ms var(--ease) both;
     transition: transform 220ms var(--ease), border-color 220ms var(--ease), box-shadow 220ms var(--ease);
 
     &:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-border);
-        box-shadow: var(--shadow-md);
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent), var(--shadow-md);
+    }
+
+    &:hover &__media img {
+        transform: scale(1.08);
+    }
+
+    >div:not(.service-card__media),
+    &__footer {
+        padding-left: 26px;
+        padding-right: 26px;
+    }
+
+    >div:not(.service-card__media) {
+        padding-top: 24px;
+    }
+
+    &__media {
+        height: 190px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: var(--surface-muted);
+        color: var(--accent);
+        font-size: 3rem;
+        font-weight: 950;
+
+        img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.45s var(--ease);
+        }
     }
 
     &__duration {
@@ -92,25 +122,14 @@
         justify-content: space-between;
         gap: 14px;
         margin-top: 28px;
+        padding-bottom: 26px;
 
         strong {
             color: var(--text);
             font-size: 1.25rem;
         }
 
-        a {
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: var(--accent);
-            color: var(--accent-contrast);
-            font-weight: 900;
-            transition: transform 180ms var(--ease), background 180ms var(--ease);
-
-            &:hover {
-                transform: translateY(-2px);
-                background: var(--accent-strong);
-            }
-        }
+        // Utiliza botones 3D globales
     }
 }
 

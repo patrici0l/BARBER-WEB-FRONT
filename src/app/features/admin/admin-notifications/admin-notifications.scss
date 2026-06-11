@@ -1,9 +1,7 @@
 .admin-notifications-page {
     min-height: 100vh;
     padding: 64px 0;
-    background:
-        radial-gradient(circle at 90% 0%, var(--accent-soft), transparent 28rem),
-        var(--bg);
+    background: var(--bg);
 
     &__header {
         display: flex;
@@ -55,9 +53,7 @@
 .history-card {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    background:
-        radial-gradient(circle at top right, var(--accent-soft), transparent 34%),
-        var(--surface);
+    background: var(--surface);
     box-shadow: var(--shadow-sm);
 }
 

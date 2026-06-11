@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast';
+import { AuthService } from '../../../core/services/auth';
 import { BarberServiceService } from '../../../core/services/barber-service';
 import { BarberService, BarberServiceRequest } from '../../../shared/models/barber-service.model';
 import { Alert } from '../../../shared/components/alert/alert';
@@ -35,7 +36,8 @@ export class AdminServices implements OnInit {
 
   constructor(
     private readonly barberServiceService: BarberServiceService,
-    private readonly toastService: ToastService
+    private readonly toastService: ToastService,
+    private readonly authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -86,6 +88,7 @@ export class AdminServices implements OnInit {
       description: this.form.description.trim(),
       price: Number(this.form.price),
       durationMinutes: Number(this.form.durationMinutes),
+      imageUrl: this.form.imageUrl?.trim() || null,
       active: this.form.active ?? true
     };
 
@@ -137,6 +140,7 @@ export class AdminServices implements OnInit {
       description: service.description,
       price: service.price,
       durationMinutes: service.durationMinutes,
+      imageUrl: service.imageUrl,
       active: service.active
     };
 
@@ -207,6 +211,7 @@ export class AdminServices implements OnInit {
       description: '',
       price: 0,
       durationMinutes: 30,
+      imageUrl: '',
       active: true
     };
   }
@@ -221,7 +226,8 @@ export class AdminServices implements OnInit {
     }
 
     if (error.status === 403) {
-      this.errorMessage = 'Tu usuario no tiene permisos de administrador para esta acción.';
+      this.authService.logout();
+      this.errorMessage = 'Tu sesión no fue reconocida como administrador por el backend. Inicia sesión nuevamente con una cuenta admin.';
       return;
     }
 

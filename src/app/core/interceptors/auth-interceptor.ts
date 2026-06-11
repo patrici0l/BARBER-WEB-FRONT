@@ -1,18 +1,19 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const publicEndpoints = [
-    '/api/auth/login',
-    '/api/auth/register',
-    '/api/services',
-    '/api/products',
-    '/api/business-hours',
-    '/api/availability'
-  ];
-
-  // Verificamos si la URL actual coincide con algún endpoint público
-  const isPublicEndpoint = publicEndpoints.some(endpoint =>
-    req.url.includes(endpoint)
+  const path = getRequestPath(req.url);
+  const isAdminEndpoint = path.startsWith('/api/admin/');
+  const isPublicEndpoint = !isAdminEndpoint && (
+    path === '/api/auth/login' ||
+    path === '/api/auth/register' ||
+    path === '/api/services' ||
+    path.startsWith('/api/services/') ||
+    path === '/api/products' ||
+    path.startsWith('/api/products/') ||
+    path === '/api/business-hours' ||
+    path.startsWith('/api/business-hours/') ||
+    path === '/api/availability' ||
+    path.startsWith('/api/availability/')
   );
 
   if (isPublicEndpoint) {
@@ -38,6 +39,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq);
 };
+
+function getRequestPath(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url.split('?')[0];
+  }
+}
 
 /**
  * Función auxiliar para decodificar el JWT y verificar su fecha de expiración

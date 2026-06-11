@@ -1,37 +1,39 @@
-@keyframes rise-in {
-    from {
-        opacity: 0;
-        transform: translateY(18px);
+@keyframes drift {
+    50% {
+        transform: translate3d(10px, -14px, 0) rotate(1deg);
     }
+}
+
+@keyframes rotate-ring {
     to {
-        opacity: 1;
-        transform: translateY(0);
+        transform: rotate(360deg);
     }
 }
 
 .hero {
     position: relative;
     overflow: hidden;
-    padding: 88px 0 80px;
-    background:
-        radial-gradient(circle at 80% 12%, var(--accent-glow), transparent 24rem),
-        linear-gradient(135deg, var(--bg), var(--bg-soft));
+    padding: 92px 0 84px;
+    background: var(--bg);
+    isolation: isolate;
 
     &::before {
         content: '';
         position: absolute;
         inset: 0;
-        pointer-events: none;
         background:
-            linear-gradient(90deg, color-mix(in srgb, var(--surface) 38%, transparent), transparent 58%),
-            repeating-linear-gradient(90deg, transparent 0 70px, color-mix(in srgb, var(--border) 45%, transparent) 70px 71px);
-        opacity: 0.45;
+            repeating-linear-gradient(90deg, transparent 0 68px, color-mix(in srgb, var(--border) 32%, transparent) 68px 69px),
+            repeating-linear-gradient(0deg, transparent 0 68px, color-mix(in srgb, var(--border) 26%, transparent) 68px 69px);
+        opacity: 0.25;
+        mask-image: linear-gradient(120deg, #000, transparent 80%);
+        pointer-events: none;
     }
 
     &__content {
         position: relative;
+        z-index: 1;
         display: grid;
-        grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.75fr);
+        grid-template-columns: minmax(0, 1.28fr) minmax(300px, 0.78fr);
         gap: 56px;
         align-items: center;
     }
@@ -44,33 +46,37 @@
         animation: rise-in 0.65s var(--ease) both;
     }
 
+    &__eyebrow {
+        display: inline-flex;
+        margin-bottom: 18px;
+        padding: 8px 12px;
+        border: 1px solid var(--accent-border);
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent-soft), var(--secondary-soft));
+        color: var(--accent-strong);
+        font-weight: 950;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+    }
+
     h1 {
+        max-width: 790px;
         margin: 0;
-        max-width: 780px;
         color: var(--text-strong);
-        font-size: clamp(2.8rem, 6vw, 5.2rem);
+        font-size: clamp(2.8rem, 6vw, 5.3rem);
         line-height: 0.96;
         letter-spacing: 0;
         animation-delay: 0.06s;
     }
 
     p {
-        max-width: 630px;
+        max-width: 640px;
         margin: 26px 0 0;
         color: var(--muted);
         font-size: 1.08rem;
         line-height: 1.75;
         animation-delay: 0.12s;
-    }
-
-    &__eyebrow {
-        display: inline-block;
-        margin-bottom: 18px;
-        color: var(--accent);
-        font-weight: 900;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        font-size: 0.76rem;
     }
 
     &__actions {
@@ -82,17 +88,25 @@
     }
 
     &__card {
+        position: relative;
+        overflow: hidden;
         padding: 30px;
-        border-radius: var(--radius-lg);
-        background: color-mix(in srgb, var(--surface) 86%, transparent);
         border: 1px solid var(--border);
-        box-shadow: var(--shadow-md);
-        backdrop-filter: blur(12px);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
         animation-delay: 0.22s;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
 
         h2 {
             margin: 0 0 22px;
-            color: var(--accent);
+            color: var(--accent-strong);
         }
 
         ul {
@@ -124,41 +138,89 @@
             }
         }
     }
+
+    &__visual {
+        position: relative;
+        height: 180px;
+        margin-bottom: 24px;
+        border-radius: 24px;
+        background: var(--surface-muted);
+        border: 1px solid var(--border);
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 24px;
+            border: 1px solid var(--accent-border);
+            border-radius: 50%;
+            animation: rotate-ring 10s linear infinite;
+        }
+
+        span {
+            position: absolute;
+            width: 76px;
+            height: 76px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            box-shadow: var(--shadow-button);
+            animation: drift 5.5s var(--ease) infinite;
+
+            &:nth-child(1) {
+                left: 28px;
+                top: 30px;
+            }
+
+            &:nth-child(2) {
+                right: 34px;
+                top: 42px;
+                width: 54px;
+                height: 54px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--coral), var(--accent));
+                animation-delay: -1.6s;
+            }
+
+            &:nth-child(3) {
+                left: 42%;
+                bottom: 28px;
+                width: 92px;
+                height: 18px;
+                border-radius: 999px;
+                background: var(--surface);
+                animation-delay: -2.4s;
+            }
+        }
+    }
 }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0 22px;
-    border-radius: 999px;
-    font-weight: 900;
-    transition:
-        transform 0.22s var(--ease),
-        box-shadow 0.22s var(--ease),
-        background 0.22s var(--ease);
-
-    &:hover {
-        transform: translateY(-2px);
-    }
-
-    &--primary {
-        background: var(--accent);
-        color: #ffffff;
-        box-shadow: 0 14px 34px var(--accent-glow);
-    }
-
-    &--secondary {
-        border: 1px solid var(--border-strong);
-        background: var(--surface);
-        color: var(--text-strong);
-    }
-}
+// Utiliza clases de botones 3D globales (styles.scss)
 
 .highlights {
-    padding: 66px 0;
-    background: var(--bg);
+    padding: 70px 0;
+    background:
+        linear-gradient(180deg, var(--bg), var(--bg-soft));
+
+    .section-heading {
+        max-width: 760px;
+        margin-bottom: 28px;
+        animation: rise-in 0.55s var(--ease) both;
+
+        span {
+            color: var(--secondary);
+            font-size: 0.78rem;
+            font-weight: 950;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            margin: 10px 0 0;
+            color: var(--text);
+            font-size: clamp(1.8rem, 4vw, 3.2rem);
+            line-height: 1.05;
+        }
+    }
 
     &__grid {
         display: grid;
@@ -166,25 +228,32 @@
         gap: 18px;
 
         article {
+            position: relative;
+            overflow: hidden;
             padding: 26px;
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             background: var(--surface);
-            border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
-            transition:
-                transform 0.24s var(--ease),
-                box-shadow 0.24s var(--ease),
-                border-color 0.24s var(--ease);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
             &:hover {
-                transform: translateY(-5px);
-                border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
+                transform: translateY(-8px);
+                border-color: var(--accent);
                 box-shadow: var(--shadow-md);
+            }
+
+            strong {
+                display: inline-flex;
+                margin-bottom: 18px;
+                color: var(--secondary);
+                font-size: 0.8rem;
+                font-weight: 950;
             }
 
             h3 {
                 margin: 0 0 12px;
-                color: var(--accent);
+                color: var(--accent-strong);
             }
 
             p {
